@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+  <rect width="32" height="32" rx="8" fill="#FFFFFF"/>
+  <svg x="4" y="2" width="24" height="28" viewBox="99 99 181 299" preserveAspectRatio="xMidYMid meet">
+    <path d="M111 372C111 381.941 119.059 390 129 390H254C263.941 390 272 381.941 272 372V327.5L279 323.5V372C279 385.807 267.807 397 254 397H129C115.193 397 104 385.807 104 372V329L111 334.5V372Z" fill="black"/>
+    <path d="M254 100C267.807 100 279 111.193 279 125V187L272 182V125C272 115.059 263.941 107 254 107H221V109C221 114.523 216.523 119 211 119H172C166.477 119 162 114.523 162 109V107H129C119.059 107 111 115.059 111 125V168H104V125C104 111.193 115.193 100 129 100H254ZM178.5 110C177.672 110 177 110.672 177 111.5C177 112.328 177.672 113 178.5 113H206C206 111.343 204.657 110 203 110H178.5Z" fill="black"/>
+    <path d="M278.5 184L243 159V252.5L278.5 299.5V184Z" fill="url(#favicon-paint0)"/>
+    <path d="M133.5 160H152C158 160 169.5 166 180.5 181L276.5 299.5C276.5 304 269.5 310.5 266 310.5H248C244.5 310.5 240 308 234 301.5L177.912 232.5V242C176.325 241 167 237.5 164.5 226V216V188.5C164.5 180 157 172 147.5 172H137.5L133.5 160Z" fill="url(#favicon-paint1)"/>
+    <path d="M177.912 305V252.5C174.825 252.5 163 263 163 272.5V305C163 311 156.5 321.5 147.5 322.5H136.5L133.5 333.5H153C167 331 176.825 318.5 177.912 305Z" fill="url(#favicon-paint2)"/>
+    <path d="M136.5 195V185H125.5C118 185 112.5 188.5 112.5 196V233.5C111 240 106 243.5 100 243.5V252.5C108.5 252.5 112.5 256 112.5 261.5V296.5C113.5 308.5 126 310 128 310H136.5V299.5H130C127.5 299.5 125.5 298 125.5 294.5V261.5C125.5 259 123 250.5 113.5 249V247C119.5 246 125.5 242 125.5 233.5V200.5C125.5 196 130.5 195 131.5 195H136.5Z" fill="url(#favicon-paint3)"/>
+    <defs>
+      <linearGradient id="favicon-paint0" x1="146" y1="159" x2="324" y2="357" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#7045C3"/>
+        <stop offset="1" stop-color="#1B60C7"/>
+      </linearGradient>
+      <linearGradient id="favicon-paint1" x1="146" y1="159" x2="324" y2="357" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#7045C3"/>
+        <stop offset="1" stop-color="#1B60C7"/>
+      </linearGradient>
+      <linearGradient id="favicon-paint2" x1="146" y1="159" x2="324" y2="357" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#7045C3"/>
+        <stop offset="1" stop-color="#1B60C7"/>
+      </linearGradient>
+      <linearGradient id="favicon-paint3" x1="146" y1="159" x2="324" y2="357" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#7045C3"/>
+        <stop offset="1" stop-color="#1B60C7"/>
+      </linearGradient>
+    </defs>
+  </svg>
+</svg>
