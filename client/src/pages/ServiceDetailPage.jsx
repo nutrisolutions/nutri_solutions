@@ -179,7 +179,7 @@ const ServiceDetailPage = () => {
           <h2>Ready to discuss {service.title.toLowerCase()}?</h2>
           <p>Share your goals and we&apos;ll respond with scope options, timelines, and a transparent estimate.</p>
           <Link to="/contact" className="btn btn-primary">
-            Get a free consultation
+            Get a Free Demo
           </Link>
         </motion.section>
       </div>

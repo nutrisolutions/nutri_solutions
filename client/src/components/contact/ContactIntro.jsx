@@ -33,7 +33,7 @@ const ContactIntro = () => {
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
         >
-          <ExternalImage src={intro.image} alt="Consultation with the Nutri Solutions team" loading="lazy" />
+          <ExternalImage src={intro.image} alt="Free Demo with the Nutri Solutions team" loading="lazy" />
         </motion.div>
       </div>
     </section>

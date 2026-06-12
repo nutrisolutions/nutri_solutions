@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Mail, MapPin } from "lucide-react";
+import { Mail, MapPin, Phone } from "lucide-react";
 import SectionHeader from "../ui/SectionHeader";
 import SectionPageLink from "./SectionPageLink";
 import { contactInfo } from "../../data/content";
@@ -21,6 +21,10 @@ const HomeContactPreview = () => (
               <a href={`mailto:${contactInfo.email}`}>{contactInfo.email}</a>
             </li>
             <li>
+              <Phone size={18} />
+              <a href={`tel:${contactInfo.phoneTel}`}>{contactInfo.phone}</a>
+            </li>
+            <li>
               <MapPin size={18} />
               <span>{contactInfo.address}</span>
             </li>
@@ -35,7 +39,7 @@ const HomeContactPreview = () => (
         >
           <img
             src={contactInfo.previewImage}
-            alt="Team consultation at Nutri Solutions"
+            alt="Free Demo session at Nutri Solutions"
             loading="lazy"
           />
         </motion.div>

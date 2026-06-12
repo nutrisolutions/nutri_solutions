@@ -84,7 +84,7 @@ export const getHomepageContent = async (_req, res) => {
     metrics: [
       { label: "Projects Delivered", value: "240+" },
       { label: "Happy Clients", value: "100+" },
-      { label: "Years of Experience", value: "8+" }
+      { label: "Years of Experience", value: "4+" }
     ],
     services: fallbackServices
   };

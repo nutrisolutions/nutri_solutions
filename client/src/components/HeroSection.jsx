@@ -70,7 +70,7 @@ const HeroSection = ({ company }) => {
             transition={{ delay: 0.24, duration: 0.5 }}
           >
             <Link to="/contact" className="btn btn-dark btn-lg">
-              Free consultation <ArrowRight size={18} />
+              Free Demo <ArrowRight size={18} />
             </Link>
             <Link to="/projects" className="btn btn-outline-dark btn-lg">
               Start your project

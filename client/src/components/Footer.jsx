@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { ArrowUpRight, Mail, MapPin } from "lucide-react";
+import { ArrowUpRight, Mail, MapPin, Phone } from "lucide-react";
 import BrandLogo from "./ui/BrandLogo";
 import { contactInfo, navLinks, serviceNavLinks } from "../data/content";
 
@@ -43,6 +43,10 @@ const Footer = () => {
             <a href={`mailto:${contactInfo.email}`} className="protoz-footer-contact-item">
               <Mail size={15} aria-hidden="true" />
               <span>{contactInfo.email}</span>
+            </a>
+            <a href={`tel:${contactInfo.phoneTel}`} className="protoz-footer-contact-item">
+              <Phone size={15} aria-hidden="true" />
+              <span>{contactInfo.phone}</span>
             </a>
             <p className="protoz-footer-contact-item protoz-footer-address">
               <MapPin size={15} aria-hidden="true" />

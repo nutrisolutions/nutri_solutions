@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import { pageSeo, seo } from "../data/content";
+import { contactInfo, pageSeo, seo } from "../data/content";
 
 const organizationSchema = {
   "@context": "https://schema.org",
@@ -8,7 +8,16 @@ const organizationSchema = {
   name: "Nutri Solutions Private Limited",
   url: seo.siteUrl,
   description: seo.description,
-  email: "info@nutrisolutions.co.in",
+  email: contactInfo.email,
+  telephone: contactInfo.phoneTel,
+  address: {
+    "@type": "PostalAddress",
+    streetAddress: "Orbit, Plot No 30/C, Sy No 83/1, Raidurgam, Knowledge City Rd",
+    addressLocality: "Hyderabad",
+    addressRegion: "Telangana",
+    postalCode: "500032",
+    addressCountry: "IN"
+  },
   areaServed: "IN",
   sameAs: []
 };

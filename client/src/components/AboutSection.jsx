@@ -9,6 +9,8 @@ const valueIcons = { Target, Code2, Users, Shield };
 
 const AboutSection = ({ hideHeader = false }) => {
   const { images, stats, values, highlights, paragraphs } = aboutContent;
+  const experienceYears =
+    stats.find((stat) => /year/i.test(stat.label))?.value ?? "4+";
 
   return (
     <section id="about" className={`section about-section ${hideHeader ? "section-compact-top" : ""}`}>
@@ -64,7 +66,7 @@ const AboutSection = ({ hideHeader = false }) => {
               viewport={{ once: true }}
               transition={{ delay: 0.35, type: "spring" }}
             >
-              <AnimatedStatValue value="8+" className="about-experience-value" />
+              <AnimatedStatValue value={experienceYears} className="about-experience-value" />
               <span className="about-experience-label">Years building software products</span>
             </motion.div>
           </motion.div>

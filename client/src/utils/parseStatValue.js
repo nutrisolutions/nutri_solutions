@@ -1,4 +1,4 @@
-/** Parse display strings like "240+", "4.9", or "8+" into count-up parts. */
+/** Parse display strings like "240+", "4.9", or "4+" into count-up parts. */
 export function parseStatValue(value) {
   const str = String(value ?? "").trim();
   const match = str.match(/^([\d.]+)(.*)$/);

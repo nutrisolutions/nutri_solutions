@@ -47,9 +47,9 @@ export const pageSeo = {
       "Explore software projects — ERP platforms, e-commerce, healthcare apps, and cloud transformations."
   },
   contact: {
-    title: "Contact Us | Free Software Consultation | Nutri Solutions",
+    title: "Contact Us | Free Software Demo | Nutri Solutions",
     description:
-      "Get a free consultation for your web, mobile, or enterprise software project. Our team responds within one business day."
+      "Get a Free Demo for your web, mobile, or enterprise software project. Our team responds within one business day."
   },
   blog: {
     title: "Blog | Software Development Insights | Nutri Solutions",
@@ -88,7 +88,7 @@ export const pageHero = {
     label: "CONTACT",
     title: "Let's discuss your next software project",
     subtitle:
-      "Share your requirements and we'll schedule a free consultation with scope guidance, timeline options, and a transparent estimate.",
+      "Share your requirements and we'll schedule a Free Demo with scope guidance, timeline options, and a transparent estimate.",
     image: photo("1423666639041-f56000c27a9a", 1400)
   },
   careers: {
@@ -143,7 +143,7 @@ export const homeExplore = [
   {
     title: "Contact Us",
     description:
-      "Get a free consultation for your project. Share requirements and receive scope guidance, timelines, and a transparent estimate.",
+      "Get a Free Demo for your project. Share requirements and receive scope guidance, timelines, and a transparent estimate.",
     to: "/contact",
     cta: "Get in touch",
     image: photo("1556761175-5973dc0f32e7", 800)
@@ -154,7 +154,7 @@ export const homeCta = {
   title: "Ready to build your next product?",
   subtitle:
     "Tell us about your web, mobile, or enterprise software goals. We'll respond with a clear plan, timeline, and estimate.",
-  primary: { label: "Get Free Consultation", to: "/contact" },
+  primary: { label: "Get Free Demo", to: "/contact" },
   secondary: { label: "Explore Services", to: "/services" }
 };
 
@@ -291,7 +291,7 @@ export const faqs = [
   {
     question: "How can I get a project estimate?",
     answer:
-      "Share your requirements via our contact form or email. We provide a free consultation, scope document, and transparent cost estimate."
+      "Share your requirements via our contact form or email. We provide a Free Demo, scope document, and transparent cost estimate."
   }
 ];
 
@@ -309,7 +309,7 @@ export const aboutContent = {
     "Long-term support and optimization"
   ],
   stats: [
-    { value: "8+", label: "Years of Excellence" },
+    { value: "4+", label: "Years of Excellence" },
     { value: "240+", label: "Projects Delivered" },
     { value: "100+", label: "Happy Clients" },
     { value: "4.9", label: "Client Rating" }
@@ -452,9 +452,13 @@ export const careersContent = {
 
 export const contactInfo = {
   email: "info@nutrisolutions.co.in",
-  address: "T-Hub, Plot No 1/C, Sy No 83/1, Raidurgam, Hyderabad, Telangana 500081",
+  phone: "+91 91001 19741",
+  phoneTel: "+919100119741",
+  address:
+    "Orbit, Plot No 30/C, Sy No 83/1, Raidurgam, Knowledge City Rd, Hyderabad, Telangana 500032",
   previewImage: photo("1560472354-b33ff0c44a43", 800),
-  mapUrl: "https://maps.google.com/?q=T-Hub+Hyderabad"
+  mapUrl:
+    "https://maps.google.com/?q=Orbit+Plot+30+C+Knowledge+City+Rd+Raidurgam+Hyderabad+500032"
 };
 
 export const contactPageContent = {
@@ -464,15 +468,15 @@ export const contactPageContent = {
     subtitle:
       "Whether you're scoping an MVP, modernizing a legacy system, or scaling an existing product, our team pairs product thinking with hands-on engineering.",
     highlights: [
-      "Free consultation with scope and timeline options",
+      "Free Demo with scope and timeline options",
       "Transparent estimates — no surprise change orders",
       "Web, mobile, cloud, UI/UX, and QA under one roof",
-      "Based at T-Hub, Hyderabad — working with clients globally"
+      "Based in Raidurgam, Hyderabad — working with clients globally"
     ],
     image: photo("1560472354-b33ff0c44a43", 1200)
   },
   form: {
-    title: "Request a free consultation",
+    title: "Request a Free Demo",
     subtitle: "Fields marked with * are required. We typically reply within one business day.",
     topics: [
       "Web application",
@@ -498,7 +502,7 @@ export const contactPageContent = {
         step: "02",
         title: "Discovery call",
         description:
-          "We align on scope, risks, and delivery approach — usually 30–45 minutes on video or in person at T-Hub."
+          "We align on scope, risks, and delivery approach — usually 30–45 minutes on video or in person at our Hyderabad office."
       },
       {
         step: "03",
@@ -519,7 +523,7 @@ export const contactPageContent = {
 export const defaultStats = [
   { label: "Projects Delivered", value: "240+" },
   { label: "Happy Clients", value: "100+" },
-  { label: "Years of Experience", value: "8+" }
+  { label: "Years of Experience", value: "4+" }
 ];
 
 export const defaultServices = [

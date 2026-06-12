@@ -1,9 +1,10 @@
-import { Clock, Mail, MapPin, Briefcase } from "lucide-react";
+import { Briefcase, Clock, Mail, MapPin, Phone } from "lucide-react";
 import { Link } from "react-router-dom";
 import { contactInfo, contactPageContent } from "../../data/content";
 
 const channelIcons = {
   mail: Mail,
+  phone: Phone,
   map: MapPin,
   clock: Clock,
   briefcase: Briefcase
@@ -23,10 +24,21 @@ const ContactChannels = () => {
       )
     },
     {
+      id: "phone",
+      icon: "phone",
+      title: "Phone",
+      description: "Call us for quick questions or to schedule a Free Demo.",
+      action: (
+        <a href={`tel:${contactInfo.phoneTel}`} className="contact-channel-link">
+          {contactInfo.phone}
+        </a>
+      )
+    },
+    {
       id: "office",
       icon: "map",
       title: "Visit us",
-      description: "Meet the team at our T-Hub workspace in Hyderabad.",
+      description: "Meet the team at our Orbit office on Knowledge City Road, Hyderabad.",
       action: (
         <a
           href={contactInfo.mapUrl}

@@ -245,7 +245,7 @@ a {
 }
 
 .nav-links a:hover,
-.nav-mobile-links a:hover {
+.nav-mobile-links a:not(.btn):hover {
   color: var(--primary);
 }
 
@@ -287,10 +287,21 @@ a {
   padding: 1rem 0 1.25rem;
 }
 
-.nav-mobile-links a {
+.nav-mobile-links a:not(.btn) {
   color: #334155;
   font-size: 1rem;
   font-weight: 500;
+}
+
+.nav-mobile-links .btn {
+  width: 100%;
+  justify-content: center;
+  margin-top: 0.35rem;
+  color: #fff;
+}
+
+.nav-mobile-links .btn:hover {
+  color: #fff;
 }
 
 .page-main {

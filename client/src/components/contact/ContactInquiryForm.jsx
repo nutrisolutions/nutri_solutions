@@ -173,7 +173,7 @@ const ContactInquiryForm = () => {
         className="btn btn-primary btn-block contact-inquiry-submit"
         disabled={status === "submitting"}
       >
-        {status === "submitting" ? "Sending…" : "Request free consultation"} <Send size={18} />
+        {status === "submitting" ? "Sending…" : "Request Free Demo"} <Send size={18} />
       </button>
     </motion.form>
   );
