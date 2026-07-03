@@ -46,7 +46,10 @@ const PortalLayout = () => {
       <aside className="admin-sidebar">
         <Link to="/" className="brand admin-brand">
           <BrandLogo variant="logo" />
-          <span>Employee Portal</span>
+          <div className="admin-brand-text">
+            <strong>Nutri Solutions</strong>
+            <span>Employee portal</span>
+          </div>
         </Link>
         <nav className="admin-nav">
           {links.map(({ to, label, icon: Icon }) => (

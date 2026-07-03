@@ -4,6 +4,12 @@ import { employeeMyTasks, employeeUpdateTaskStatus } from "../../lib/api";
 
 const STATUS_OPTIONS = ["todo", "in_progress", "done"];
 
+const PRIORITY_PILL = {
+  low: "status-pill--neutral",
+  medium: "status-pill--info",
+  high: "status-pill--warning"
+};
+
 const PortalTasksPage = () => {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -45,25 +51,34 @@ const PortalTasksPage = () => {
 
       {message && <p className="admin-message">{message}</p>}
 
-      {loading ? (
-        <p>Loading…</p>
-      ) : tasks.length === 0 ? (
-        <p className="admin-empty">No tasks assigned yet.</p>
-      ) : (
-        <div className="admin-applications-list">
-          {tasks.map((task) => (
-            <article key={task._id} className="admin-application-card is-open">
-              <div className="admin-application-card-body">
-                <strong>
-                  <ListChecks size={16} /> {task.title}
-                </strong>
+      <section className="employee-section">
+        <div className="employee-section-head">
+          <div>
+            <h3>
+              <ListChecks size={18} /> Your tasks
+            </h3>
+            <p>{tasks.length ? `${tasks.length} task(s)` : "Nothing assigned yet"}</p>
+          </div>
+        </div>
+
+        {loading ? (
+          <p>Loading…</p>
+        ) : tasks.length === 0 ? (
+          <p className="admin-empty">No tasks assigned yet.</p>
+        ) : (
+          <div className="employee-doc-grid">
+            {tasks.map((task) => (
+              <div key={task._id} className="employee-doc-card">
+                <div className="employee-doc-card-head">
+                  <strong>{task.title}</strong>
+                  <span className={`status-pill ${PRIORITY_PILL[task.priority] || "status-pill--neutral"}`}>
+                    {task.priority}
+                  </span>
+                </div>
                 {task.description && <p>{task.description}</p>}
-                <p>
-                  Priority: {task.priority}
-                  {task.dueDate && ` · Due: ${new Date(task.dueDate).toLocaleDateString()}`}
-                </p>
+                {task.dueDate && <p>Due: {new Date(task.dueDate).toLocaleDateString()}</p>}
                 <label>
-                  Status:{" "}
+                  Status
                   <select value={task.status} onChange={(e) => handleStatusChange(task._id, e.target.value)}>
                     {STATUS_OPTIONS.map((s) => (
                       <option key={s} value={s}>
@@ -73,10 +88,10 @@ const PortalTasksPage = () => {
                   </select>
                 </label>
               </div>
-            </article>
-          ))}
-        </div>
-      )}
+            ))}
+          </div>
+        )}
+      </section>
     </div>
   );
 };

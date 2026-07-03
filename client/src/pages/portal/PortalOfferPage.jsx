@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
+import { Briefcase, CheckCircle2 } from "lucide-react";
 import { employeeAcceptOffer, employeeOffer } from "../../lib/api";
+import { formatDate } from "../../lib/employeeStatus";
 
 const PortalOfferPage = () => {
   const [employee, setEmployee] = useState(null);
@@ -47,34 +49,47 @@ const PortalOfferPage = () => {
 
       {message && <p className="admin-message">{message}</p>}
 
-      {loading ? (
-        <p>Loading…</p>
-      ) : !employee?.offerLetterUrl ? (
-        <p className="admin-empty">No offer has been sent yet.</p>
-      ) : (
-        <div className="admin-form-card">
-          <div className="admin-form-actions">
-            <a className="btn btn-outline" href={employee.offerLetterUrl} target="_blank" rel="noreferrer">
-              View offer letter
-            </a>
-            <a className="btn btn-outline" href={employee.joiningLetterUrl} target="_blank" rel="noreferrer">
-              View joining letter
-            </a>
+      <section className="employee-section">
+        <div className="employee-section-head">
+          <div>
+            <h3>
+              <Briefcase size={18} /> Offer letter
+            </h3>
+            <p>
+              {employee?.offerAcceptedAt
+                ? `Accepted on ${formatDate(employee.offerAcceptedAt)}`
+                : employee?.offerLetterUrl
+                  ? "Review and accept your offer below"
+                  : "Sent once documents are verified"}
+            </p>
           </div>
-
-          {employee.status === "offer_sent" && (
-            <div className="admin-form-actions">
-              <button type="button" className="btn btn-primary" onClick={handleAccept} disabled={accepting}>
-                {accepting ? "Accepting…" : "Accept offer"}
-              </button>
-            </div>
-          )}
-
-          {employee.offerAcceptedAt && (
-            <p>Accepted on {new Date(employee.offerAcceptedAt).toLocaleString()}</p>
-          )}
         </div>
-      )}
+
+        {loading ? (
+          <p>Loading…</p>
+        ) : !employee?.offerLetterUrl ? (
+          <p className="admin-empty">No offer has been sent yet.</p>
+        ) : (
+          <>
+            <div className="admin-form-actions">
+              <a className="btn btn-outline btn-sm" href={employee.offerLetterUrl} target="_blank" rel="noreferrer">
+                View offer letter
+              </a>
+              <a className="btn btn-outline btn-sm" href={employee.joiningLetterUrl} target="_blank" rel="noreferrer">
+                View joining letter
+              </a>
+            </div>
+
+            {employee.status === "offer_sent" && (
+              <div className="admin-form-actions">
+                <button type="button" className="btn btn-primary btn-sm" onClick={handleAccept} disabled={accepting}>
+                  <CheckCircle2 size={14} /> {accepting ? "Accepting…" : "Accept offer"}
+                </button>
+              </div>
+            )}
+          </>
+        )}
+      </section>
     </div>
   );
 };

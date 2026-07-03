@@ -26,6 +26,7 @@ import AdminDepartmentsPage from "./pages/admin/AdminDepartmentsPage";
 import AdminEmployeesPage from "./pages/admin/AdminEmployeesPage";
 import AdminTasksPage from "./pages/admin/AdminTasksPage";
 import AdminLeavePage from "./pages/admin/AdminLeavePage";
+import AdminCalendarPage from "./pages/admin/AdminCalendarPage";
 import PortalProtectedRoute from "./components/portal/PortalProtectedRoute";
 import PortalRoleGate from "./components/portal/PortalRoleGate";
 import PortalLayout from "./components/portal/PortalLayout";
@@ -66,6 +67,7 @@ const App = () => {
         <Route path="employees" element={<AdminEmployeesPage />} />
         <Route path="tasks" element={<AdminTasksPage />} />
         <Route path="leave" element={<AdminLeavePage />} />
+        <Route path="calendar" element={<AdminCalendarPage />} />
       </Route>
 
       <Route path="/portal/login" element={<PortalLoginPage />} />

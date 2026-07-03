@@ -5,6 +5,7 @@ import {
   Briefcase,
   Building2,
   CalendarClock,
+  CalendarDays,
   ChevronDown,
   FolderKanban,
   Globe,
@@ -45,7 +46,8 @@ const groups = [
     label: "Workforce",
     links: [
       { to: "/admin/tasks", label: "Tasks", icon: ListChecks },
-      { to: "/admin/leave", label: "Leave", icon: CalendarClock }
+      { to: "/admin/leave", label: "Leave", icon: CalendarClock },
+      { to: "/admin/calendar", label: "Calendar", icon: CalendarDays }
     ]
   },
   {
@@ -91,7 +93,10 @@ const AdminLayout = () => {
       <aside className="admin-sidebar">
         <Link to="/" className="brand admin-brand">
           <BrandLogo variant="logo" />
-          <span>Admin</span>
+          <div className="admin-brand-text">
+            <strong>Nutri Solutions</strong>
+            <span>Admin panel</span>
+          </div>
         </Link>
         <nav className="admin-nav">
           <NavLink

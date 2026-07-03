@@ -1,7 +1,7 @@
 import Employee from "../models/Employee.js";
 import Interview from "../models/Interview.js";
 import EmployeeNotification from "../models/EmployeeNotification.js";
-import { createTeamsMeeting } from "../services/teamsService.js";
+import { createJitsiMeeting } from "../services/jitsiService.js";
 
 const pushHistory = (employee, status, note, changedBy) => {
   employee.status = status;
@@ -34,26 +34,19 @@ export const scheduleInterview = async (req, res) => {
     if (Number.isNaN(startDateTime.getTime())) {
       return res.status(400).json({ message: "Invalid date/time" });
     }
-    const endDateTime = new Date(startDateTime.getTime() + Number(durationMinutes) * 60 * 1000);
-
-    let meeting;
-    try {
-      meeting = await createTeamsMeeting({
-        subject: `Interview (Round ${round}) — ${employee.fullName}`,
-        startDateTime: startDateTime.toISOString(),
-        endDateTime: endDateTime.toISOString()
-      });
-    } catch (graphError) {
-      return res.status(502).json({ message: graphError.message });
-    }
+    const meeting = createJitsiMeeting({
+      subject: `Interview (Round ${round}) — ${employee.fullName}`,
+      employeeId: employee._id,
+      round
+    });
 
     const interview = await Interview.create({
       employee: employee._id,
       round: Number(round),
       scheduledAt: startDateTime,
       durationMinutes: Number(durationMinutes),
-      teamsMeetingId: meeting.teamsMeetingId,
-      teamsJoinUrl: meeting.teamsJoinUrl,
+      meetingId: meeting.meetingId,
+      joinUrl: meeting.joinUrl,
       scheduledBy: req.admin.id
     });
 
@@ -66,7 +59,7 @@ export const scheduleInterview = async (req, res) => {
       employee: employee._id,
       audience: "employee",
       type: "interview_scheduled",
-      message: `Round ${round} interview scheduled for ${startDateTime.toLocaleString()} (${durationMinutes} min). Join link: ${interview.teamsJoinUrl}`
+      message: `Round ${round} interview scheduled for ${startDateTime.toLocaleString()} (${durationMinutes} min). Join link: ${interview.joinUrl}`
     });
 
     return res.status(201).json({ interview, employee });

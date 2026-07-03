@@ -4,7 +4,7 @@ import Lenis from "lenis";
 
 const useSmoothScroll = () => {
   const { pathname } = useLocation();
-  const isAdminRoute = pathname.startsWith("/admin");
+  const isAdminRoute = pathname.startsWith("/admin") || pathname.startsWith("/portal");
 
   useEffect(() => {
     if (isAdminRoute) return undefined;

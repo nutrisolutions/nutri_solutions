@@ -8,6 +8,7 @@ import {
   cancelMyLeaveRequest,
   createLeaveRequest,
   getMe,
+  listCalendarEventsForEmployee,
   getOffer,
   listLeaveTypesForEmployee,
   listMyCompanyDocuments,
@@ -48,5 +49,7 @@ router.get("/me/leave-types", requireEmployeeAuth, listLeaveTypesForEmployee);
 router.get("/me/leave-requests", requireEmployeeAuth, listMyLeaveRequests);
 router.post("/me/leave-requests", requireEmployeeAuth, createLeaveRequest);
 router.put("/me/leave-requests/:id/cancel", requireEmployeeAuth, cancelMyLeaveRequest);
+
+router.get("/me/calendar-events", requireEmployeeAuth, listCalendarEventsForEmployee);
 
 export default router;

@@ -213,6 +213,23 @@ a {
   height: 36px;
 }
 
+.admin-brand-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.25;
+}
+
+.admin-brand-text strong {
+  font-size: 0.98rem;
+  color: var(--text);
+}
+
+.admin-brand-text span {
+  font-size: 0.76rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
 .admin-login-card-brand .brand-logo--icon {
   height: 48px;
   flex-shrink: 0;
@@ -2843,6 +2860,7 @@ html.admin-route.lenis body {
 .admin-form-actions {
   display: flex;
   gap: 0.75rem;
+  margin-top: 1.1rem;
 }
 
 .admin-tag-input {
@@ -5093,6 +5111,35 @@ html.admin-route.lenis body {
   color: #047857;
 }
 
+.admin-badge--danger {
+  background: rgba(220, 38, 38, 0.12);
+  color: #b91c1c;
+}
+
+.admin-calendar-layout {
+  display: grid;
+  grid-template-columns: minmax(320px, 420px) 1fr;
+  gap: 1.25rem;
+  align-items: start;
+}
+
+.portal-dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+}
+
+.portal-dashboard-grid .employee-section {
+  margin-bottom: 0;
+}
+
+@media (max-width: 900px) {
+  .admin-calendar-layout,
+  .portal-dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 .admin-careers-applications-count {
   font-size: 0.82rem;
   color: var(--text-muted);
@@ -5250,7 +5297,6 @@ html.admin-route.lenis body {
   display: flex;
   flex-direction: column;
   gap: 1.75rem;
-  max-width: 980px;
 }
 
 .employee-header-card {
@@ -5285,6 +5331,189 @@ html.admin-route.lenis body {
   font-size: 1.1rem;
   color: #fff;
   background: var(--gradient-brand);
+}
+
+.month-calendar {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.1rem 1.25rem 1.25rem;
+}
+
+.month-calendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 0.9rem;
+}
+
+.month-calendar-header strong {
+  font-size: 1.02rem;
+  min-width: 160px;
+  text-align: center;
+}
+
+.month-calendar-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--bg-muted);
+  color: var(--text);
+  cursor: pointer;
+}
+
+.month-calendar-nav:hover {
+  background: var(--primary-soft);
+  color: var(--primary);
+}
+
+.month-calendar-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  margin-bottom: 0.35rem;
+}
+
+.month-calendar-weekdays span {
+  text-align: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.month-calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.25rem;
+}
+
+.month-calendar-cell {
+  position: relative;
+  aspect-ratio: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.2rem;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: none;
+  font-size: 0.85rem;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.month-calendar-cell.is-empty {
+  cursor: default;
+}
+
+.month-calendar-cell:not(.is-empty):hover {
+  background: var(--bg-muted);
+}
+
+.month-calendar-cell.is-today .month-calendar-date {
+  font-weight: 800;
+  color: var(--primary);
+}
+
+.month-calendar-cell.is-selected {
+  border-color: var(--primary);
+  background: var(--primary-soft);
+}
+
+.month-calendar-cell.is-weekend {
+  background: rgba(100, 116, 139, 0.08);
+  color: var(--text-muted);
+}
+
+.month-calendar-cell.has-holiday {
+  background: rgba(220, 38, 38, 0.08);
+  color: var(--text);
+}
+
+.month-calendar-cell.has-wfh {
+  background: rgba(37, 99, 235, 0.08);
+  color: var(--text);
+}
+
+.month-calendar-dots {
+  display: flex;
+  gap: 0.2rem;
+}
+
+.month-calendar-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.month-calendar-dot--holiday {
+  background: #dc2626;
+}
+
+.month-calendar-dot--wfh {
+  background: #2563eb;
+}
+
+.month-calendar-dot--weekend {
+  background: #64748b;
+}
+
+.month-calendar-legend {
+  display: flex;
+  gap: 1.25rem;
+  margin-top: 0.9rem;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.month-calendar-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.employee-avatar--sm {
+  width: 26px;
+  height: 26px;
+  font-size: 0.72rem;
+}
+
+.employee-leave-card {
+  gap: 0.5rem;
+}
+
+.employee-leave-range {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.employee-leave-reason {
+  margin: 0;
+  font-size: 0.88rem;
+}
+
+.employee-leave-reject-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.employee-leave-reject-row input {
+  width: 100%;
+  padding: 0.5rem 0.65rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 0.85rem;
 }
 
 .employee-header-text h2 {
@@ -5472,6 +5701,39 @@ html.admin-route.lenis body {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   gap: 0.85rem;
+}
+
+.employee-docs-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 1.4rem 0 0.85rem;
+}
+
+.employee-docs-toolbar h4 {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.employee-docs-toolbar span {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-weight: 400;
+  margin-left: 0.4rem;
+}
+
+.employee-docs-toggle {
+  background: none;
+  border: none;
+  color: var(--primary, #6d28d9);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0.2rem 0.4rem;
+}
+
+.employee-docs-toggle:hover {
+  text-decoration: underline;
 }
 
 .employee-doc-card {
@@ -5674,13 +5936,159 @@ html.admin-route.lenis body {
 }
 
 .admin-nav-group-items {
+  position: relative;
   display: flex;
   flex-direction: column;
   overflow: hidden;
   padding-left: 1.6rem;
 }
 
+.admin-nav-group-items::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0.7rem;
+  bottom: 1.1rem;
+  width: 1px;
+  background: var(--border);
+}
+
 .admin-nav-group-items .admin-nav-link {
+  position: relative;
   font-size: 0.9rem;
   padding: 0.5rem 0.75rem;
+}
+
+.admin-nav-group-items .admin-nav-link::before {
+  content: "";
+  position: absolute;
+  left: -0.9rem;
+  top: 50%;
+  width: 0.9rem;
+  height: 1px;
+  background: var(--border);
+}
+
+/* Admin dashboard: analytics snapshot + recents */
+
+.admin-dashboard-analytics {
+  margin-bottom: 1.5rem;
+}
+
+.admin-dashboard-analytics .employee-section-head {
+  align-items: flex-start;
+}
+
+.admin-dashboard-analytics-mini {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 1rem;
+}
+
+.admin-dashboard-analytics-mini > div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.admin-dashboard-analytics-mini svg {
+  color: var(--primary);
+  margin-bottom: 0.2rem;
+}
+
+.admin-dashboard-recents {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1rem;
+}
+
+.admin-dashboard-recent-panel {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem;
+  background: var(--bg-muted);
+}
+
+.admin-dashboard-recent-panel h4 {
+  margin: 0 0 0.75rem;
+  font-size: 0.92rem;
+}
+
+.admin-dashboard-recent-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.admin-dashboard-recent-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+}
+
+.admin-dashboard-recent-list a {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.admin-dashboard-recent-list a span:first-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 140px;
+}
+
+.admin-dashboard-recent-list a:hover span:first-child {
+  color: var(--primary);
+}
+
+.admin-dashboard-recent-time {
+  flex-shrink: 0;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+  .admin-dashboard-analytics-mini {
+    gap: 1.25rem;
+  }
+}
+
+/* Document upload progress */
+
+.employee-doc-upload-progress {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.employee-doc-upload-progress-track {
+  width: 100%;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--border);
+  overflow: hidden;
+}
+
+.employee-doc-upload-progress-fill {
+  height: 100%;
+  background: var(--gradient-brand);
+  border-radius: 999px;
+  transition: width 0.15s ease;
+}
+
+.employee-doc-upload-progress span {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  font-weight: 600;
 }

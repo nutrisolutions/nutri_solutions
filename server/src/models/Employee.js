@@ -37,6 +37,7 @@ const onboardingItemSchema = new mongoose.Schema(
 const employeeSchema = new mongoose.Schema(
   {
     application: { type: mongoose.Schema.Types.ObjectId, ref: "JobApplication", default: null },
+    employeeCode: { type: String, unique: true, sparse: true },
     fullName: { type: String, required: true, trim: true },
     email: { type: String, required: true, unique: true, lowercase: true, trim: true },
     phone: { type: String, default: "", trim: true },
@@ -48,6 +49,10 @@ const employeeSchema = new mongoose.Schema(
     status: { type: String, enum: STATUSES, default: "draft" },
     position: { type: String, default: "", trim: true },
     joiningDate: { type: Date, default: null },
+    ctc: { type: String, default: "", trim: true },
+    workLocation: { type: String, default: "", trim: true },
+    probationMonths: { type: Number, default: null },
+    reportingManagerName: { type: String, default: "", trim: true },
     offerLetterUrl: { type: String, default: "" },
     joiningLetterUrl: { type: String, default: "" },
     offerAcceptedAt: { type: Date, default: null },

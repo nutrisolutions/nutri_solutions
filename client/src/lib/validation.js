@@ -61,11 +61,32 @@ export const interviewSchema = z.object({
     .min(5, "Duration must be at least 5 minutes")
 });
 
-export const companyDocumentSchema = z.object({
-  type: z.enum(["appraisal_letter", "payslip"]),
-  label: z.string().trim().min(1, "Label is required"),
-  periodMonth: z.number().int().min(1).max(12).optional().nullable(),
-  periodYear: z.number().int().min(2000).max(2100).optional().nullable()
+export const payslipDetailsSchema = z.object({
+  periodMonth: z.number().int().min(1, "Select a month").max(12, "Select a month"),
+  periodYear: z.number().int().min(2000, "Enter a valid year").max(2100, "Enter a valid year"),
+  lopDays: z.number().int().min(0, "Loss-of-pay days cannot be negative").max(31).optional().nullable()
+});
+
+export const appraisalDetailsSchema = z.object({
+  newCtc: z.string().trim().min(1, "New CTC is required"),
+  effectiveDate: z.string().trim().min(1, "Effective date is required"),
+  remarks: z.string().trim().optional()
+});
+
+export const offerDetailsSchema = z.object({
+  position: z.string().trim().min(1, "Position is required"),
+  ctc: z.string().trim().min(1, "CTC is required"),
+  workLocation: z.string().trim().min(1, "Work location is required"),
+  joiningDate: z.string().trim().min(1, "Joining date is required"),
+  probationMonths: z.number().int().min(0).max(24).optional().nullable(),
+  reportingManagerName: z.string().trim().optional()
+});
+
+export const calendarEventSchema = z.object({
+  date: z.string().trim().min(1, "Date is required"),
+  type: z.enum(["holiday", "wfh"], { errorMap: () => ({ message: "Select a type" }) }),
+  title: z.string().trim().min(1, "Title is required"),
+  description: z.string().trim().optional()
 });
 
 export const taskSchema = z.object({

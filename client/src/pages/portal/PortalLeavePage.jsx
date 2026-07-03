@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import { CalendarClock, Send, Wallet } from "lucide-react";
 import {
   employeeCancelLeaveRequest,
   employeeCreateLeaveRequest,
@@ -10,6 +11,13 @@ import { leaveRequestSchema } from "../../lib/validation";
 import { firstZodError } from "../../lib/zodHelpers";
 
 const emptyForm = { leaveType: "", startDate: "", endDate: "", halfDay: false, reason: "" };
+
+const LEAVE_STATUS_PILL = {
+  pending: "status-pill--info",
+  approved: "status-pill--success",
+  rejected: "status-pill--danger",
+  cancelled: "status-pill--neutral"
+};
 
 const PortalLeavePage = () => {
   const { employee } = useEmployeeAuth();
@@ -80,90 +88,114 @@ const PortalLeavePage = () => {
       {message && <p className="admin-message">{message}</p>}
 
       {employee?.leaveBalances && (
-        <div className="admin-form-card">
-          <h2>Balances</h2>
-          <ul>
+        <section className="employee-section">
+          <div className="employee-section-head">
+            <div>
+              <h3>
+                <Wallet size={18} /> Leave balances
+              </h3>
+            </div>
+          </div>
+          <div className="employee-doc-grid">
             {leaveTypes.map((lt) => (
-              <li key={lt._id}>
-                {lt.name}: {employee.leaveBalances[lt._id] ?? lt.defaultDaysPerYear} day(s) remaining
-              </li>
+              <div key={lt._id} className="employee-doc-card">
+                <div className="employee-doc-card-head">
+                  <strong>{lt.name}</strong>
+                </div>
+                <p>{employee.leaveBalances[lt._id] ?? lt.defaultDaysPerYear} day(s) remaining</p>
+              </div>
             ))}
-          </ul>
-        </div>
+          </div>
+        </section>
       )}
 
-      <form className="admin-form-card" onSubmit={handleSubmit}>
-        <h2>Request leave</h2>
-        <div className="admin-form-grid">
-          <label>
-            Leave type
-            <select value={form.leaveType} onChange={(e) => setForm({ ...form, leaveType: e.target.value })} required>
-              {leaveTypes.map((lt) => (
-                <option key={lt._id} value={lt._id}>
-                  {lt.name}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label>
-            Start date
-            <input type="date" value={form.startDate} onChange={(e) => setForm({ ...form, startDate: e.target.value })} required />
-          </label>
-          <label>
-            End date
-            <input type="date" value={form.endDate} onChange={(e) => setForm({ ...form, endDate: e.target.value })} required />
-          </label>
-          <label className="admin-form-full">
-            Reason
-            <textarea rows={3} value={form.reason} onChange={(e) => setForm({ ...form, reason: e.target.value })} required />
-          </label>
+      <section className="employee-section">
+        <div className="employee-section-head">
+          <div>
+            <h3>
+              <Send size={18} /> Request leave
+            </h3>
+          </div>
         </div>
-        <div className="admin-form-checks">
-          <label>
-            <input
-              type="checkbox"
-              checked={form.halfDay}
-              onChange={(e) => setForm({ ...form, halfDay: e.target.checked })}
-            />
-            Half day
-          </label>
-        </div>
-        <div className="admin-form-actions">
-          <button type="submit" className="btn btn-primary">
-            Submit request
-          </button>
-        </div>
-      </form>
+        <form className="admin-form-card" onSubmit={handleSubmit} style={{ marginBottom: 0 }}>
+          <div className="admin-form-grid">
+            <label>
+              Leave type
+              <select value={form.leaveType} onChange={(e) => setForm({ ...form, leaveType: e.target.value })} required>
+                {leaveTypes.map((lt) => (
+                  <option key={lt._id} value={lt._id}>
+                    {lt.name}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label>
+              Start date
+              <input type="date" value={form.startDate} onChange={(e) => setForm({ ...form, startDate: e.target.value })} required />
+            </label>
+            <label>
+              End date
+              <input type="date" value={form.endDate} onChange={(e) => setForm({ ...form, endDate: e.target.value })} required />
+            </label>
+            <label className="admin-form-full">
+              Reason
+              <textarea rows={3} value={form.reason} onChange={(e) => setForm({ ...form, reason: e.target.value })} required />
+            </label>
+          </div>
+          <div className="admin-form-checks">
+            <label>
+              <input
+                type="checkbox"
+                checked={form.halfDay}
+                onChange={(e) => setForm({ ...form, halfDay: e.target.checked })}
+              />
+              Half day
+            </label>
+          </div>
+          <div className="admin-form-actions">
+            <button type="submit" className="btn btn-primary btn-sm">
+              Submit request
+            </button>
+          </div>
+        </form>
+      </section>
 
-      <h2 className="admin-careers-apps-heading">My requests</h2>
-      {loading ? (
-        <p>Loading…</p>
-      ) : requests.length === 0 ? (
-        <p className="admin-empty">No leave requests yet.</p>
-      ) : (
-        <div className="admin-applications-list">
-          {requests.map((r) => (
-            <article key={r._id} className="admin-application-card is-open">
-              <div className="admin-application-card-body">
-                <strong>{r.leaveType?.name}</strong>
+      <section className="employee-section">
+        <div className="employee-section-head">
+          <div>
+            <h3>
+              <CalendarClock size={18} /> My requests
+            </h3>
+            <p>{requests.length ? `${requests.length} request(s)` : "No requests yet"}</p>
+          </div>
+        </div>
+        {loading ? (
+          <p>Loading…</p>
+        ) : requests.length === 0 ? (
+          <p className="admin-empty">No leave requests yet.</p>
+        ) : (
+          <div className="employee-doc-grid">
+            {requests.map((r) => (
+              <div key={r._id} className="employee-doc-card">
+                <div className="employee-doc-card-head">
+                  <strong>{r.leaveType?.name}</strong>
+                  <span className={`status-pill ${LEAVE_STATUS_PILL[r.status] || "status-pill--neutral"}`}>{r.status}</span>
+                </div>
                 <p>
                   {new Date(r.startDate).toLocaleDateString()} – {new Date(r.endDate).toLocaleDateString()}
                   {r.halfDay ? " (half day)" : ""}
                 </p>
                 <p>{r.reason}</p>
-                <p>
-                  <span className="admin-badge">{r.status}</span>
-                </p>
                 {r.status === "pending" && (
                   <button type="button" className="btn btn-outline btn-sm" onClick={() => handleCancel(r._id)}>
                     Cancel
                   </button>
                 )}
               </div>
-            </article>
-          ))}
-        </div>
-      )}
+            ))}
+          </div>
+        )}
+      </section>
     </div>
   );
 };

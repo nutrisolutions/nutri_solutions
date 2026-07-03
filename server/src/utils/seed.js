@@ -4,6 +4,14 @@ import Project from "../models/Project.js";
 import Blog from "../models/Blog.js";
 import TechStack from "../models/TechStack.js";
 import JobPosition from "../models/JobPosition.js";
+import LeaveType from "../models/LeaveType.js";
+
+const DEFAULT_LEAVE_TYPES = [
+  { name: "Casual Leave", defaultDaysPerYear: 12, paid: true },
+  { name: "Sick Leave", defaultDaysPerYear: 12, paid: true },
+  { name: "Earned Leave", defaultDaysPerYear: 15, paid: true },
+  { name: "Loss of Pay", defaultDaysPerYear: 0, paid: false }
+];
 
 const isDatabaseEmpty = async () => {
   const [admins, projects, blogs, tech, careers] = await Promise.all([
@@ -29,4 +37,12 @@ export const seedDatabase = async () => {
 
   await Admin.create({ email: adminEmail, passwordHash, name: "Site Admin", role: "superadmin" });
   console.log(`Empty database — admin seeded: ${adminEmail}`);
+};
+
+export const seedDefaultLeaveTypes = async () => {
+  const count = await LeaveType.countDocuments();
+  if (count > 0) return;
+
+  await LeaveType.insertMany(DEFAULT_LEAVE_TYPES);
+  console.log("No leave types found — seeded default leave types");
 };

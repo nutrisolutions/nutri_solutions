@@ -6,8 +6,8 @@ const interviewSchema = new mongoose.Schema(
     round: { type: Number, required: true, min: 1 },
     scheduledAt: { type: Date, required: true },
     durationMinutes: { type: Number, required: true, min: 5 },
-    teamsMeetingId: { type: String, default: "" },
-    teamsJoinUrl: { type: String, default: "" },
+    meetingId: { type: String, default: "" },
+    joinUrl: { type: String, default: "" },
     status: { type: String, enum: ["scheduled", "completed", "cancelled"], default: "scheduled" },
     notes: { type: String, default: "" },
     scheduledBy: { type: mongoose.Schema.Types.ObjectId, ref: "Admin", required: true }

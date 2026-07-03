@@ -1,4 +1,5 @@
 import bcrypt from "bcryptjs";
+import Admin from "../models/Admin.js";
 import Employee from "../models/Employee.js";
 import EmployeeDocument from "../models/EmployeeDocument.js";
 import EmployeeNotification from "../models/EmployeeNotification.js";
@@ -7,7 +8,14 @@ import CompanyDocument from "../models/CompanyDocument.js";
 import JobApplication from "../models/JobApplication.js";
 import LeaveType from "../models/LeaveType.js";
 import { generateTempPassword } from "../utils/tempPassword.js";
+import { generateEmployeeCode } from "../utils/employeeCode.js";
 import { uploadBufferToCloudinary } from "../utils/cloudinaryUpload.js";
+import {
+  generateAppraisalLetterBuffer,
+  generateJoiningLetterBuffer,
+  generateOfferLetterBuffer,
+  generatePayslipBuffer
+} from "../services/letterGenerator.js";
 
 const pushHistory = (employee, status, note, changedBy) => {
   employee.status = status;
@@ -53,49 +61,132 @@ export const getEmployee = async (req, res) => {
   }
 };
 
-export const uploadCompanyDocument = async (req, res) => {
+export const generatePayslip = async (req, res) => {
   try {
-    const employee = await Employee.findById(req.params.id);
+    const employee = await Employee.findById(req.params.id).populate("department", "name");
     if (!employee) return res.status(404).json({ message: "Employee not found" });
     if (employee.employmentType !== "permanent") {
-      return res.status(400).json({ message: "Company documents can only be added for permanent employees" });
+      return res.status(400).json({ message: "Payslips can only be generated for permanent employees" });
     }
-    if (!req.file) return res.status(400).json({ message: "No file uploaded" });
 
-    const { type, label } = req.body;
-    if (!["appraisal_letter", "payslip"].includes(type)) {
-      return res.status(400).json({ message: "type must be 'appraisal_letter' or 'payslip'" });
+    const { periodMonth, periodYear, lopDays } = req.body;
+    const month = Number(periodMonth);
+    const year = Number(periodYear);
+    if (!month || month < 1 || month > 12 || !year) {
+      return res.status(400).json({ message: "periodMonth (1-12) and periodYear are required" });
     }
-    if (!label?.trim()) return res.status(400).json({ message: "label is required" });
+    if (!employee.ctc) {
+      return res.status(400).json({ message: "This employee has no CTC on file yet — generate their offer first" });
+    }
 
-    let uploadResult;
+    const hrAdmin = await Admin.findById(req.admin.id).select("name");
+    const details = {
+      fullName: employee.fullName,
+      employeeCode: employee.employeeCode,
+      position: employee.position,
+      department: employee.department?.name || "",
+      ctc: employee.ctc,
+      periodMonth: month,
+      periodYear: year,
+      lopDays: lopDays ? Number(lopDays) : 0,
+      hrName: hrAdmin?.name || "HR Team"
+    };
+
+    let buffer;
     try {
-      uploadResult = await uploadBufferToCloudinary(req.file.buffer, {
+      buffer = await generatePayslipBuffer(details);
+    } catch (genError) {
+      return res.status(500).json({ message: `Failed to generate payslip: ${genError.message}` });
+    }
+
+    let upload;
+    try {
+      upload = await uploadBufferToCloudinary(buffer, {
         folder: `nutri-solutions/employees/${employee._id}/company-documents`,
-        filename: req.file.originalname
+        filename: `payslip-${year}-${month}-${employee._id}.pdf`
       });
     } catch (uploadError) {
       return res.status(502).json({ message: `Cloudinary upload failed: ${uploadError.message}` });
     }
 
+    const label = `Payslip - ${new Date(year, month - 1).toLocaleString(undefined, { month: "long" })} ${year}`;
     const companyDocument = await CompanyDocument.create({
       employee: employee._id,
-      type,
-      label: label.trim(),
-      fileUrl: uploadResult.secure_url,
-      periodMonth: req.body.periodMonth ? Number(req.body.periodMonth) : null,
-      periodYear: req.body.periodYear ? Number(req.body.periodYear) : null,
+      type: "payslip",
+      label,
+      fileUrl: upload.secure_url,
+      periodMonth: month,
+      periodYear: year,
       uploadedBy: req.admin.id
     });
 
-    await notify(
-      employee._id,
-      "employee",
-      type === "payslip" ? "payslip_added" : "appraisal_letter_added",
-      `A new ${type === "payslip" ? "payslip" : "appraisal letter"} ("${label.trim()}") is available in your Documents.`
-    );
+    await notify(employee._id, "employee", "payslip_added", `Your ${label} is now available in Documents.`);
 
     return res.status(201).json({ companyDocument });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+export const generateAppraisal = async (req, res) => {
+  try {
+    const employee = await Employee.findById(req.params.id).populate("department", "name");
+    if (!employee) return res.status(404).json({ message: "Employee not found" });
+    if (employee.employmentType !== "permanent") {
+      return res.status(400).json({ message: "Appraisal letters can only be generated for permanent employees" });
+    }
+
+    const { newCtc, effectiveDate, remarks } = req.body;
+    if (!newCtc?.trim() || !effectiveDate) {
+      return res.status(400).json({ message: "newCtc and effectiveDate are required" });
+    }
+
+    const hrAdmin = await Admin.findById(req.admin.id).select("name");
+    const details = {
+      fullName: employee.fullName,
+      employeeCode: employee.employeeCode,
+      position: employee.position,
+      department: employee.department?.name || "",
+      oldCtc: employee.ctc,
+      newCtc: newCtc.trim(),
+      effectiveDate: new Date(effectiveDate),
+      remarks: remarks?.trim() || "",
+      hrName: hrAdmin?.name || "HR Team",
+      appraisalDate: new Date()
+    };
+
+    let buffer;
+    try {
+      buffer = await generateAppraisalLetterBuffer(details);
+    } catch (genError) {
+      return res.status(500).json({ message: `Failed to generate appraisal letter: ${genError.message}` });
+    }
+
+    let upload;
+    try {
+      upload = await uploadBufferToCloudinary(buffer, {
+        folder: `nutri-solutions/employees/${employee._id}/company-documents`,
+        filename: `appraisal-${employee._id}-${Date.now()}.pdf`
+      });
+    } catch (uploadError) {
+      return res.status(502).json({ message: `Cloudinary upload failed: ${uploadError.message}` });
+    }
+
+    const label = `Appraisal Letter - ${details.effectiveDate.toLocaleDateString(undefined, { year: "numeric", month: "long" })}`;
+    const companyDocument = await CompanyDocument.create({
+      employee: employee._id,
+      type: "appraisal_letter",
+      label,
+      fileUrl: upload.secure_url,
+      uploadedBy: req.admin.id
+    });
+
+    employee.ctc = newCtc.trim();
+    await employee.save();
+
+    await notify(employee._id, "employee", "appraisal_letter_added", `Your ${label} is now available in Documents.`);
+
+    return res.status(201).json({ companyDocument, employee });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
@@ -271,32 +362,67 @@ export const reviewDocument = async (req, res) => {
   }
 };
 
-export const sendOffer = async (req, res) => {
+export const generateOffer = async (req, res) => {
   try {
-    const employee = await Employee.findById(req.params.id);
+    const employee = await Employee.findById(req.params.id).populate("department", "name");
     if (!employee) return res.status(404).json({ message: "Employee not found" });
     if (employee.status !== "documents_verified") {
       return res.status(400).json({ message: "All documents must be verified before sending an offer" });
     }
 
-    const files = req.files || {};
-    const offerFile = files.offerLetter?.[0];
-    const joiningFile = files.joiningLetter?.[0];
-    if (!offerFile || !joiningFile) {
-      return res.status(400).json({ message: "Both offer letter and joining letter files are required" });
+    const { position, ctc, workLocation, joiningDate, probationMonths, reportingManagerName } = req.body;
+    if (!position?.trim() || !ctc?.trim() || !workLocation?.trim() || !joiningDate) {
+      return res.status(400).json({ message: "position, ctc, workLocation, and joiningDate are required" });
+    }
+
+    employee.position = position.trim();
+    employee.ctc = ctc.trim();
+    employee.workLocation = workLocation.trim();
+    employee.joiningDate = new Date(joiningDate);
+    employee.probationMonths = probationMonths ? Number(probationMonths) : null;
+    employee.reportingManagerName = reportingManagerName?.trim() || "";
+    if (!employee.employeeCode) {
+      employee.employeeCode = generateEmployeeCode();
+    }
+
+    const hrAdmin = await Admin.findById(req.admin.id).select("name");
+
+    const letterDetails = {
+      fullName: employee.fullName,
+      employeeCode: employee.employeeCode,
+      position: employee.position,
+      department: employee.department?.name || "",
+      ctc: employee.ctc,
+      workLocation: employee.workLocation,
+      joiningDate: employee.joiningDate,
+      probationMonths: employee.probationMonths,
+      reportingManagerName: employee.reportingManagerName,
+      hrName: hrAdmin?.name || "HR Team",
+      offerDate: new Date()
+    };
+
+    let offerBuffer;
+    let joiningBuffer;
+    try {
+      [offerBuffer, joiningBuffer] = await Promise.all([
+        generateOfferLetterBuffer(letterDetails),
+        generateJoiningLetterBuffer(letterDetails)
+      ]);
+    } catch (genError) {
+      return res.status(500).json({ message: `Failed to generate letters: ${genError.message}` });
     }
 
     let offerUpload;
     let joiningUpload;
     try {
       [offerUpload, joiningUpload] = await Promise.all([
-        uploadBufferToCloudinary(offerFile.buffer, {
+        uploadBufferToCloudinary(offerBuffer, {
           folder: `nutri-solutions/employees/${employee._id}/offer`,
-          filename: offerFile.originalname
+          filename: `offer-letter-${employee._id}.pdf`
         }),
-        uploadBufferToCloudinary(joiningFile.buffer, {
+        uploadBufferToCloudinary(joiningBuffer, {
           folder: `nutri-solutions/employees/${employee._id}/offer`,
-          filename: joiningFile.originalname
+          filename: `joining-letter-${employee._id}.pdf`
         })
       ]);
     } catch (uploadError) {
@@ -305,7 +431,7 @@ export const sendOffer = async (req, res) => {
 
     employee.offerLetterUrl = offerUpload.secure_url;
     employee.joiningLetterUrl = joiningUpload.secure_url;
-    pushHistory(employee, "offer_sent", "Offer and joining letter sent", "hr");
+    pushHistory(employee, "offer_sent", "Offer and joining letter generated and sent", "hr");
     await employee.save();
 
     await notify(employee._id, "employee", "offer_sent", "Your offer letter and joining letter are ready to review.");

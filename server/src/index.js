@@ -18,7 +18,7 @@ import contactRoutes from "./routes/contactRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
 import analyticsRoutes from "./routes/analyticsRoutes.js";
 import employeeRoutes from "./routes/employeeRoutes.js";
-import { seedDatabase } from "./utils/seed.js";
+import { seedDatabase, seedDefaultLeaveTypes } from "./utils/seed.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
@@ -54,6 +54,7 @@ app.use("/api/employees", employeeRoutes);
 connectDb()
   .then(async () => {
     await seedDatabase();
+    await seedDefaultLeaveTypes();
     const server = app.listen(PORT, () => {
       console.log(`Server running on port ${PORT}`);
     });

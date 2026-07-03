@@ -17,89 +17,32 @@ import {
   UserCheck
 } from "lucide-react";
 import { adminDepartments, adminEmployees } from "../../lib/api";
-import { companyDocumentSchema, createEmployeeSchema, interviewSchema, requestDocumentsSchema } from "../../lib/validation";
+import {
+  appraisalDetailsSchema,
+  createEmployeeSchema,
+  interviewSchema,
+  offerDetailsSchema,
+  payslipDetailsSchema,
+  requestDocumentsSchema
+} from "../../lib/validation";
 import { firstZodError } from "../../lib/zodHelpers";
 import { onlyDigits } from "../../lib/phoneInput";
+import {
+  DOC_STATUS_META,
+  INTERVIEW_STATUS_META,
+  STATUS_LABELS,
+  STATUS_TO_STEP,
+  STEPPER_STEPS,
+  formatDate,
+  initials
+} from "../../lib/employeeStatus";
 
 const emptyCreateForm = { fullName: "", email: "", phone: "", department: "", position: "" };
 const emptyInterviewForm = { round: 1, date: "", time: "", durationMinutes: 30 };
-const emptyCompanyDocForm = { type: "payslip", label: "", periodMonth: "", periodYear: "" };
-
-const STATUS_META = {
-  draft: { label: "Draft", pill: "neutral" },
-  interviewing: { label: "Interviewing", pill: "info" },
-  selected: { label: "Selected", pill: "success" },
-  documents_requested: { label: "Documents requested", pill: "info" },
-  documents_under_review: { label: "Documents under review", pill: "progress" },
-  documents_rejected: { label: "Documents rejected", pill: "danger" },
-  documents_verified: { label: "Documents verified", pill: "success" },
-  offer_sent: { label: "Offer sent", pill: "info" },
-  offer_accepted: { label: "Offer accepted", pill: "progress" },
-  onboarding: { label: "Onboarding", pill: "warning" },
-  onboarding_completed: { label: "Onboarding completed", pill: "success" },
-  permanent: { label: "Permanent", pill: "success" }
-};
-
-const STATUS_LABELS = Object.fromEntries(Object.entries(STATUS_META).map(([k, v]) => [k, v.label]));
-
-const DOC_STATUS_META = {
-  pending: { label: "Pending", pill: "neutral" },
-  uploaded: { label: "Uploaded", pill: "info" },
-  verified: { label: "Verified", pill: "success" },
-  rejected: { label: "Rejected", pill: "danger" }
-};
-
-const INTERVIEW_STATUS_META = {
-  scheduled: { label: "Scheduled", pill: "info" },
-  completed: { label: "Completed", pill: "success" },
-  cancelled: { label: "Cancelled", pill: "danger" }
-};
-
-const STEPPER_STEPS = [
-  { key: "draft", label: "Draft" },
-  { key: "interviewing", label: "Interviews" },
-  { key: "selected", label: "Selected" },
-  { key: "documents", label: "Documents" },
-  { key: "offer_sent", label: "Offer" },
-  { key: "offer_accepted", label: "Accepted" },
-  { key: "onboarding", label: "Onboarding" },
-  { key: "onboarding_completed", label: "Completed" },
-  { key: "permanent", label: "Permanent" }
-];
-
-const STATUS_TO_STEP = {
-  draft: "draft",
-  interviewing: "interviewing",
-  selected: "selected",
-  documents_requested: "documents",
-  documents_under_review: "documents",
-  documents_rejected: "documents",
-  documents_verified: "documents",
-  offer_sent: "offer_sent",
-  offer_accepted: "offer_accepted",
-  onboarding: "onboarding",
-  onboarding_completed: "onboarding_completed",
-  permanent: "permanent"
-};
-
-const initials = (name = "") =>
-  name
-    .split(" ")
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((p) => p[0]?.toUpperCase())
-    .join("");
-
-const formatDate = (value) =>
-  value
-    ? new Date(value).toLocaleString(undefined, {
-        year: "numeric",
-        month: "short",
-        day: "numeric",
-        hour: "2-digit",
-        minute: "2-digit"
-      })
-    : "—";
+const now = new Date();
+const emptyPayslipForm = { periodMonth: now.getMonth() + 1, periodYear: now.getFullYear(), lopDays: "" };
+const emptyAppraisalForm = { newCtc: "", effectiveDate: "", remarks: "" };
+const emptyOfferForm = { position: "", ctc: "", workLocation: "", joiningDate: "", probationMonths: "", reportingManagerName: "" };
 
 const AdminEmployeesPage = () => {
   const [employees, setEmployees] = useState([]);
@@ -108,20 +51,22 @@ const AdminEmployeesPage = () => {
   const [view, setView] = useState("list");
   const [selected, setSelected] = useState(null);
   const [documents, setDocuments] = useState([]);
-  const [notifications, setNotifications] = useState([]);
   const [interviews, setInterviews] = useState([]);
   const [interviewForm, setInterviewForm] = useState(emptyInterviewForm);
   const [companyDocuments, setCompanyDocuments] = useState([]);
-  const [companyDocForm, setCompanyDocForm] = useState(emptyCompanyDocForm);
-  const [companyDocFile, setCompanyDocFile] = useState(null);
+  const [showAllCompanyDocs, setShowAllCompanyDocs] = useState(false);
+  const [payslipForm, setPayslipForm] = useState(emptyPayslipForm);
+  const [appraisalForm, setAppraisalForm] = useState(emptyAppraisalForm);
+  const [generatingPayslip, setGeneratingPayslip] = useState(false);
+  const [generatingAppraisal, setGeneratingAppraisal] = useState(false);
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(true);
   const [tempPasswordInfo, setTempPasswordInfo] = useState(null);
   const [newDocLabel, setNewDocLabel] = useState("");
   const [rejectReasonFor, setRejectReasonFor] = useState(null);
   const [rejectReason, setRejectReason] = useState("");
-  const [offerLetter, setOfferLetter] = useState(null);
-  const [joiningLetter, setJoiningLetter] = useState(null);
+  const [offerForm, setOfferForm] = useState(emptyOfferForm);
+  const [generatingOffer, setGeneratingOffer] = useState(false);
   const [checklistInput, setChecklistInput] = useState("");
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [createForm, setCreateForm] = useState(emptyCreateForm);
@@ -158,10 +103,18 @@ const AdminEmployeesPage = () => {
       const data = await adminEmployees.get(employee._id);
       setSelected(data.employee);
       setDocuments(data.documents);
-      setNotifications(data.notifications);
       setInterviews(data.interviews || []);
       setInterviewForm({ ...emptyInterviewForm, round: (data.interviews?.length || 0) + 1 });
       setCompanyDocuments(data.companyDocuments || []);
+      setOfferForm({
+        ...emptyOfferForm,
+        position: data.employee.position || "",
+        ctc: data.employee.ctc || "",
+        workLocation: data.employee.workLocation || "",
+        joiningDate: data.employee.joiningDate ? data.employee.joiningDate.slice(0, 10) : "",
+        probationMonths: data.employee.probationMonths || "",
+        reportingManagerName: data.employee.reportingManagerName || ""
+      });
     } catch {
       setMessage("Failed to load employee");
     }
@@ -172,7 +125,6 @@ const AdminEmployeesPage = () => {
     const data = await adminEmployees.get(selected._id);
     setSelected(data.employee);
     setDocuments(data.documents);
-    setNotifications(data.notifications);
     setInterviews(data.interviews || []);
     setCompanyDocuments(data.companyDocuments || []);
   };
@@ -181,9 +133,9 @@ const AdminEmployeesPage = () => {
     setView("list");
     setSelected(null);
     setDocuments([]);
-    setNotifications([]);
     setInterviews([]);
     setCompanyDocuments([]);
+    setShowAllCompanyDocs(false);
     setTempPasswordInfo(null);
   };
 
@@ -254,7 +206,7 @@ const AdminEmployeesPage = () => {
   const handleRequestDocuments = async (e) => {
     e.preventDefault();
     const labels = newDocLabel
-      .split("\n")
+      .split(",")
       .map((l) => l.trim())
       .filter(Boolean);
     setMessage("");
@@ -287,18 +239,29 @@ const AdminEmployeesPage = () => {
     }
   };
 
-  const handleSendOffer = async (e) => {
+  const handleGenerateOffer = async (e) => {
     e.preventDefault();
-    if (!offerLetter || !joiningLetter) return;
     setMessage("");
+
+    const payload = {
+      ...offerForm,
+      probationMonths: offerForm.probationMonths ? Number(offerForm.probationMonths) : null
+    };
+    const validationError = firstZodError(offerDetailsSchema, payload);
+    if (validationError) {
+      setMessage(validationError);
+      return;
+    }
+
+    setGeneratingOffer(true);
     try {
-      await adminEmployees.sendOffer(selected._id, offerLetter, joiningLetter);
-      setOfferLetter(null);
-      setJoiningLetter(null);
-      setMessage("Offer sent");
+      await adminEmployees.generateOffer(selected._id, payload);
+      setMessage("Offer letter and joining letter generated and sent");
       await refreshDetail();
     } catch (err) {
-      setMessage(err.response?.data?.message || "Failed to send offer");
+      setMessage(err.response?.data?.message || "Failed to generate offer");
+    } finally {
+      setGeneratingOffer(false);
     }
   };
 
@@ -348,34 +311,54 @@ const AdminEmployeesPage = () => {
     }
   };
 
-  const handleUploadCompanyDocument = async (e) => {
+  const handleGeneratePayslip = async (e) => {
     e.preventDefault();
     setMessage("");
 
     const payload = {
-      type: companyDocForm.type,
-      label: companyDocForm.label,
-      periodMonth: companyDocForm.periodMonth ? Number(companyDocForm.periodMonth) : null,
-      periodYear: companyDocForm.periodYear ? Number(companyDocForm.periodYear) : null
+      periodMonth: Number(payslipForm.periodMonth),
+      periodYear: Number(payslipForm.periodYear),
+      lopDays: payslipForm.lopDays ? Number(payslipForm.lopDays) : null
     };
-    const validationError = firstZodError(companyDocumentSchema, payload);
+    const validationError = firstZodError(payslipDetailsSchema, payload);
     if (validationError) {
       setMessage(validationError);
       return;
     }
-    if (!companyDocFile) {
-      setMessage("Choose a file to upload");
+
+    setGeneratingPayslip(true);
+    try {
+      await adminEmployees.generatePayslip(selected._id, payload);
+      setMessage("Payslip generated");
+      setPayslipForm(emptyPayslipForm);
+      await refreshDetail();
+    } catch (err) {
+      setMessage(err.response?.data?.message || "Failed to generate payslip");
+    } finally {
+      setGeneratingPayslip(false);
+    }
+  };
+
+  const handleGenerateAppraisal = async (e) => {
+    e.preventDefault();
+    setMessage("");
+
+    const validationError = firstZodError(appraisalDetailsSchema, appraisalForm);
+    if (validationError) {
+      setMessage(validationError);
       return;
     }
 
+    setGeneratingAppraisal(true);
     try {
-      await adminEmployees.uploadCompanyDocument(selected._id, { ...payload, file: companyDocFile });
-      setMessage("Document added");
-      setCompanyDocForm(emptyCompanyDocForm);
-      setCompanyDocFile(null);
+      await adminEmployees.generateAppraisal(selected._id, appraisalForm);
+      setMessage("Appraisal letter generated");
+      setAppraisalForm(emptyAppraisalForm);
       await refreshDetail();
     } catch (err) {
-      setMessage(err.response?.data?.message || "Failed to upload document");
+      setMessage(err.response?.data?.message || "Failed to generate appraisal letter");
+    } finally {
+      setGeneratingAppraisal(false);
     }
   };
 
@@ -540,9 +523,6 @@ const AdminEmployeesPage = () => {
                   )}
                 </div>
                 <div className="employee-status-row">
-                  <span className={`status-pill status-pill--${STATUS_META[selected.status]?.pill || "neutral"}`}>
-                    {STATUS_LABELS[selected.status] || selected.status}
-                  </span>
                   <span className={selected.employmentType === "permanent" ? "admin-badge admin-badge--ok" : "admin-badge"}>
                     {selected.employmentType}
                   </span>
@@ -602,7 +582,7 @@ const AdminEmployeesPage = () => {
                   <p>
                     {interviews.length
                       ? `${interviews.length} round(s) scheduled`
-                      : "Schedule interview rounds via Microsoft Teams before marking the candidate selected"}
+                      : "Schedule interview rounds via Jitsi Meet before marking the candidate selected"}
                   </p>
                 </div>
               </div>
@@ -648,7 +628,7 @@ const AdminEmployeesPage = () => {
                   </div>
                   <div className="admin-form-actions">
                     <button type="submit" className="btn btn-primary btn-sm">
-                      <Send size={14} /> Schedule Teams interview
+                      <Send size={14} /> Schedule Jitsi interview
                     </button>
                   </div>
                 </form>
@@ -669,9 +649,9 @@ const AdminEmployeesPage = () => {
                       <p>
                         {formatDate(iv.scheduledAt)} · {iv.durationMinutes} min
                       </p>
-                      {iv.teamsJoinUrl && (
-                        <a className="employee-doc-link" href={iv.teamsJoinUrl} target="_blank" rel="noreferrer">
-                          Join Teams meeting
+                      {iv.joinUrl && (
+                        <a className="employee-doc-link" href={iv.joinUrl} target="_blank" rel="noreferrer">
+                          Join Jitsi meeting
                         </a>
                       )}
                     </div>
@@ -694,12 +674,12 @@ const AdminEmployeesPage = () => {
             {selected.status === "selected" && (
               <form className="admin-form-card" onSubmit={handleRequestDocuments} style={{ marginBottom: documents.length ? "1.1rem" : 0 }}>
                 <label>
-                  Request documents (one per line)
+                  Request documents (comma separated)
                   <textarea
                     rows={3}
                     value={newDocLabel}
                     onChange={(e) => setNewDocLabel(e.target.value)}
-                    placeholder={"ID proof\nAddress proof"}
+                    placeholder="ID proof, Address proof"
                   />
                 </label>
                 <div className="admin-form-actions">
@@ -770,12 +750,16 @@ const AdminEmployeesPage = () => {
                   <h3>
                     <Briefcase size={18} /> Offer
                   </h3>
-                  <p>{selected.offerLetterUrl ? "Offer and joining letter on file" : "Send once all documents are verified"}</p>
+                  <p>
+                    {selected.offerLetterUrl
+                      ? "Offer and joining letter generated"
+                      : "Fill in the details below to generate and send the offer and joining letter"}
+                  </p>
                 </div>
               </div>
 
-              {selected.offerLetterUrl ? (
-                <div className="admin-form-actions">
+              {selected.offerLetterUrl && (
+                <div className="admin-form-actions" style={{ marginBottom: "1.1rem" }}>
                   <a className="btn btn-outline btn-sm" href={selected.offerLetterUrl} target="_blank" rel="noreferrer">
                     View offer letter
                   </a>
@@ -783,21 +767,66 @@ const AdminEmployeesPage = () => {
                     View joining letter
                   </a>
                 </div>
-              ) : (
-                <form className="admin-form-card" onSubmit={handleSendOffer}>
+              )}
+
+              {selected.status === "documents_verified" && !selected.offerLetterUrl && (
+                <form className="admin-form-card" onSubmit={handleGenerateOffer} style={{ marginBottom: 0 }}>
                   <div className="admin-form-grid">
                     <label>
-                      Offer letter
-                      <input type="file" onChange={(e) => setOfferLetter(e.target.files?.[0])} required />
+                      Position *
+                      <input
+                        value={offerForm.position}
+                        onChange={(e) => setOfferForm({ ...offerForm, position: e.target.value })}
+                        required
+                      />
                     </label>
                     <label>
-                      Joining letter
-                      <input type="file" onChange={(e) => setJoiningLetter(e.target.files?.[0])} required />
+                      Annual CTC *
+                      <input
+                        placeholder="e.g. 8,00,000"
+                        value={offerForm.ctc}
+                        onChange={(e) => setOfferForm({ ...offerForm, ctc: e.target.value })}
+                        required
+                      />
+                    </label>
+                    <label>
+                      Work location *
+                      <input
+                        value={offerForm.workLocation}
+                        onChange={(e) => setOfferForm({ ...offerForm, workLocation: e.target.value })}
+                        required
+                      />
+                    </label>
+                    <label>
+                      Joining date *
+                      <input
+                        type="date"
+                        value={offerForm.joiningDate}
+                        onChange={(e) => setOfferForm({ ...offerForm, joiningDate: e.target.value })}
+                        required
+                      />
+                    </label>
+                    <label>
+                      Probation (months)
+                      <input
+                        type="number"
+                        min={0}
+                        max={24}
+                        value={offerForm.probationMonths}
+                        onChange={(e) => setOfferForm({ ...offerForm, probationMonths: e.target.value })}
+                      />
+                    </label>
+                    <label>
+                      Reporting manager
+                      <input
+                        value={offerForm.reportingManagerName}
+                        onChange={(e) => setOfferForm({ ...offerForm, reportingManagerName: e.target.value })}
+                      />
                     </label>
                   </div>
                   <div className="admin-form-actions">
-                    <button type="submit" className="btn btn-primary btn-sm">
-                      <Send size={14} /> Send offer
+                    <button type="submit" className="btn btn-primary btn-sm" disabled={generatingOffer}>
+                      <Send size={14} /> {generatingOffer ? "Generating…" : "Generate offer"}
                     </button>
                   </div>
                 </form>
@@ -873,113 +902,129 @@ const AdminEmployeesPage = () => {
                   <h3>
                     <FileText size={18} /> Company documents
                   </h3>
-                  <p>Appraisal letters and monthly payslips visible to the employee in their portal.</p>
+                  <p>Generate payslips and appraisal letters — no file upload, HR just fills in the details.</p>
                 </div>
               </div>
 
-              <form className="admin-form-card" onSubmit={handleUploadCompanyDocument} style={{ marginBottom: companyDocuments.length ? "1.1rem" : 0 }}>
-                <div className="admin-form-grid">
-                  <label>
-                    Type
-                    <select
-                      value={companyDocForm.type}
-                      onChange={(e) => setCompanyDocForm({ ...companyDocForm, type: e.target.value })}
-                    >
-                      <option value="payslip">Payslip</option>
-                      <option value="appraisal_letter">Appraisal letter</option>
-                    </select>
-                  </label>
-                  <label>
-                    Label
-                    <input
-                      value={companyDocForm.label}
-                      onChange={(e) => setCompanyDocForm({ ...companyDocForm, label: e.target.value })}
-                      placeholder={companyDocForm.type === "payslip" ? "Payslip - June 2026" : "Annual Appraisal 2026"}
-                      required
-                    />
-                  </label>
-                  {companyDocForm.type === "payslip" && (
-                    <>
-                      <label>
-                        Month
-                        <select
-                          value={companyDocForm.periodMonth}
-                          onChange={(e) => setCompanyDocForm({ ...companyDocForm, periodMonth: e.target.value })}
-                        >
-                          <option value="">Select month</option>
-                          {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => (
-                            <option key={m} value={m}>
-                              {new Date(2000, m - 1).toLocaleString(undefined, { month: "long" })}
-                            </option>
-                          ))}
-                        </select>
-                      </label>
-                      <label>
-                        Year
-                        <input
-                          type="number"
-                          value={companyDocForm.periodYear}
-                          onChange={(e) => setCompanyDocForm({ ...companyDocForm, periodYear: e.target.value })}
-                          placeholder="2026"
-                        />
-                      </label>
-                    </>
-                  )}
-                  <label>
-                    File
-                    <input type="file" onChange={(e) => setCompanyDocFile(e.target.files?.[0])} required />
-                  </label>
-                </div>
-                <div className="admin-form-actions">
-                  <button type="submit" className="btn btn-primary btn-sm">
-                    <Send size={14} /> Add document
-                  </button>
-                </div>
-              </form>
+              <div className="admin-form-grid" style={{ marginBottom: "1.1rem" }}>
+                <form className="admin-form-card" onSubmit={handleGeneratePayslip} style={{ marginBottom: 0 }}>
+                  <h4>Generate payslip</h4>
+                  <div className="admin-form-grid">
+                    <label>
+                      Month
+                      <select
+                        value={payslipForm.periodMonth}
+                        onChange={(e) => setPayslipForm({ ...payslipForm, periodMonth: e.target.value })}
+                      >
+                        {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => (
+                          <option key={m} value={m}>
+                            {new Date(2000, m - 1).toLocaleString(undefined, { month: "long" })}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+                    <label>
+                      Year
+                      <input
+                        type="number"
+                        value={payslipForm.periodYear}
+                        onChange={(e) => setPayslipForm({ ...payslipForm, periodYear: e.target.value })}
+                      />
+                    </label>
+                    <label>
+                      Loss of pay (days)
+                      <input
+                        type="number"
+                        min={0}
+                        max={31}
+                        value={payslipForm.lopDays}
+                        onChange={(e) => setPayslipForm({ ...payslipForm, lopDays: e.target.value })}
+                        placeholder="0"
+                      />
+                    </label>
+                  </div>
+                  <div className="admin-form-actions">
+                    <button type="submit" className="btn btn-primary btn-sm" disabled={generatingPayslip}>
+                      <Send size={14} /> {generatingPayslip ? "Generating…" : "Generate payslip"}
+                    </button>
+                  </div>
+                </form>
+
+                <form className="admin-form-card" onSubmit={handleGenerateAppraisal} style={{ marginBottom: 0 }}>
+                  <h4>Generate appraisal letter</h4>
+                  <div className="admin-form-grid">
+                    <label>
+                      New CTC (per annum)
+                      <input
+                        placeholder="e.g. 6,50,000"
+                        value={appraisalForm.newCtc}
+                        onChange={(e) => setAppraisalForm({ ...appraisalForm, newCtc: e.target.value })}
+                        required
+                      />
+                    </label>
+                    <label>
+                      Effective date
+                      <input
+                        type="date"
+                        value={appraisalForm.effectiveDate}
+                        onChange={(e) => setAppraisalForm({ ...appraisalForm, effectiveDate: e.target.value })}
+                        required
+                      />
+                    </label>
+                    <label className="admin-form-full">
+                      Remarks (optional)
+                      <textarea
+                        rows={2}
+                        value={appraisalForm.remarks}
+                        onChange={(e) => setAppraisalForm({ ...appraisalForm, remarks: e.target.value })}
+                      />
+                    </label>
+                  </div>
+                  <div className="admin-form-actions">
+                    <button type="submit" className="btn btn-primary btn-sm" disabled={generatingAppraisal}>
+                      <Send size={14} /> {generatingAppraisal ? "Generating…" : "Generate appraisal letter"}
+                    </button>
+                  </div>
+                </form>
+              </div>
 
               {companyDocuments.length > 0 && (
-                <div className="employee-doc-grid">
-                  {companyDocuments.map((doc) => (
-                    <div key={doc._id} className="employee-doc-card">
-                      <div className="employee-doc-card-head">
-                        <strong>
-                          <FileText size={15} /> {doc.label}
-                        </strong>
-                        <span className="admin-badge">{doc.type === "payslip" ? "Payslip" : "Appraisal"}</span>
+                <>
+                  <div className="employee-docs-toolbar">
+                    <h4>
+                      Generated documents
+                      <span>({companyDocuments.length})</span>
+                    </h4>
+                    {companyDocuments.length > 3 && (
+                      <button
+                        type="button"
+                        className="employee-docs-toggle"
+                        onClick={() => setShowAllCompanyDocs((v) => !v)}
+                      >
+                        {showAllCompanyDocs ? "Show less" : `View all ${companyDocuments.length}`}
+                      </button>
+                    )}
+                  </div>
+                  <div className="employee-doc-grid">
+                    {(showAllCompanyDocs ? companyDocuments : companyDocuments.slice(0, 3)).map((doc) => (
+                      <div key={doc._id} className="employee-doc-card">
+                        <div className="employee-doc-card-head">
+                          <strong>
+                            <FileText size={15} /> {doc.label}
+                          </strong>
+                          <span className="admin-badge">{doc.type === "payslip" ? "Payslip" : "Appraisal"}</span>
+                        </div>
+                        <a className="employee-doc-link" href={doc.fileUrl} target="_blank" rel="noreferrer">
+                          View file
+                        </a>
                       </div>
-                      <a className="employee-doc-link" href={doc.fileUrl} target="_blank" rel="noreferrer">
-                        View file
-                      </a>
-                    </div>
-                  ))}
-                </div>
+                    ))}
+                  </div>
+                </>
               )}
             </section>
           )}
 
-          {notifications.length > 0 && (
-            <section className="employee-section">
-              <div className="employee-section-head">
-                <div>
-                  <h3>
-                    <Clock size={18} /> Activity
-                  </h3>
-                  <p>Latest status changes and notifications for this employee</p>
-                </div>
-              </div>
-              <div className="employee-timeline">
-                {notifications.map((n) => (
-                  <div key={n._id} className="employee-timeline-item">
-                    <div className="employee-timeline-dot" />
-                    <div className="employee-timeline-body">
-                      <p>{n.message}</p>
-                      <span>{formatDate(n.createdAt)}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </section>
-          )}
         </div>
       )}
     </div>

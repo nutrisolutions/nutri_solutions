@@ -100,33 +100,16 @@ export const adminEmployees = {
   listInterviews: (id) => api.get(`/api/admin/employees/${id}/interviews`).then((r) => r.data.interviews),
   scheduleInterview: (id, data) => api.post(`/api/admin/employees/${id}/interviews`, data).then((r) => r.data),
   markSelected: (id, note) => api.put(`/api/admin/employees/${id}/select`, { note }).then((r) => r.data.employee),
-  uploadCompanyDocument: (id, { type, label, periodMonth, periodYear, file }) => {
-    const formData = new FormData();
-    formData.append("type", type);
-    formData.append("label", label);
-    if (periodMonth) formData.append("periodMonth", periodMonth);
-    if (periodYear) formData.append("periodYear", periodYear);
-    formData.append("file", file);
-    return api
-      .post(`/api/admin/employees/${id}/company-documents`, formData, {
-        headers: { "Content-Type": "multipart/form-data" }
-      })
-      .then((r) => r.data.companyDocument);
-  },
+  generatePayslip: (id, data) => api.post(`/api/admin/employees/${id}/payslips`, data).then((r) => r.data.companyDocument),
+  generateAppraisal: (id, data) => api.post(`/api/admin/employees/${id}/appraisals`, data).then((r) => r.data),
   requestDocuments: (id, labels) =>
     api.post(`/api/admin/employees/${id}/documents`, { labels }).then((r) => r.data.documents),
   reviewDocument: (employeeId, docId, decision, rejectionReason) =>
     api
       .put(`/api/admin/employees/${employeeId}/documents/${docId}/review`, { decision, rejectionReason })
       .then((r) => r.data),
-  sendOffer: (id, offerLetterFile, joiningLetterFile) => {
-    const formData = new FormData();
-    formData.append("offerLetter", offerLetterFile);
-    formData.append("joiningLetter", joiningLetterFile);
-    return api
-      .post(`/api/admin/employees/${id}/offer`, formData, { headers: { "Content-Type": "multipart/form-data" } })
-      .then((r) => r.data.employee);
-  },
+  generateOffer: (id, details) =>
+    api.post(`/api/admin/employees/${id}/offer`, details).then((r) => r.data.employee),
   startOnboarding: (id, checklist) =>
     api.put(`/api/admin/employees/${id}/onboarding/start`, { checklist }).then((r) => r.data.employee),
   updateOnboardingItem: (id, itemIndex, completed) =>
@@ -134,6 +117,13 @@ export const adminEmployees = {
   completeOnboarding: (id) => api.put(`/api/admin/employees/${id}/onboarding/complete`).then((r) => r.data.employee),
   convertToPermanent: (id) => api.put(`/api/admin/employees/${id}/convert-permanent`).then((r) => r.data.employee),
   remove: (id) => api.delete(`/api/admin/employees/${id}`)
+};
+
+export const adminCalendar = {
+  list: (month, year) => api.get("/api/admin/calendar-events", { params: { month, year } }).then((r) => r.data.events),
+  create: (data) => api.post("/api/admin/calendar-events", data).then((r) => r.data.event),
+  update: (id, data) => api.put(`/api/admin/calendar-events/${id}`, data).then((r) => r.data.event),
+  remove: (id) => api.delete(`/api/admin/calendar-events/${id}`)
 };
 
 export const adminTasks = {
@@ -177,12 +167,18 @@ export const employeeMyDocuments = () => employeeApi.get("/api/employees/me/docu
 export const employeeMyCompanyDocuments = () =>
   employeeApi.get("/api/employees/me/company-documents").then((r) => r.data.companyDocuments);
 
-export const employeeUploadDocument = (docId, file) => {
+export const employeeUploadDocument = (docId, file, onProgress) => {
   const formData = new FormData();
   formData.append("file", file);
   return employeeApi
     .post(`/api/employees/me/documents/${docId}/upload`, formData, {
-      headers: { "Content-Type": "multipart/form-data" }
+      headers: { "Content-Type": "multipart/form-data" },
+      onUploadProgress: onProgress
+        ? (event) => {
+            const percent = event.total ? Math.round((event.loaded / event.total) * 100) : 0;
+            onProgress(percent);
+          }
+        : undefined
     })
     .then((r) => r.data.document);
 };
@@ -210,6 +206,9 @@ export const employeeCreateLeaveRequest = (data) =>
 
 export const employeeCancelLeaveRequest = (id) =>
   employeeApi.put(`/api/employees/me/leave-requests/${id}/cancel`).then((r) => r.data.request);
+
+export const employeeCalendarEvents = (month, year) =>
+  employeeApi.get("/api/employees/me/calendar-events", { params: { month, year } }).then((r) => r.data.events);
 
 export const adminUpload = {
   image: (file) => {

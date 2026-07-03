@@ -6,6 +6,7 @@ import CompanyDocument from "../models/CompanyDocument.js";
 import Task from "../models/Task.js";
 import LeaveType from "../models/LeaveType.js";
 import LeaveRequest from "../models/LeaveRequest.js";
+import CalendarEvent from "../models/CalendarEvent.js";
 import { uploadBufferToCloudinary } from "../utils/cloudinaryUpload.js";
 
 export const getMe = async (req, res) => {
@@ -251,9 +252,16 @@ export const createLeaveRequest = async (req, res) => {
     if (!employee) return res.status(404).json({ message: "Employee not found" });
 
     const requestedDays = dayCount(startDate, endDate, Boolean(halfDay));
-    const balance = employee.leaveBalances?.get(String(leaveType));
+    let balance = employee.leaveBalances?.get(String(leaveType));
     if (balance === undefined) {
-      return res.status(400).json({ message: "No leave balance found for this leave type" });
+      const leaveTypeDoc = await LeaveType.findById(leaveType);
+      if (!leaveTypeDoc) {
+        return res.status(400).json({ message: "Leave type not found" });
+      }
+      balance = leaveTypeDoc.defaultDaysPerYear;
+      if (!employee.leaveBalances) employee.leaveBalances = new Map();
+      employee.leaveBalances.set(String(leaveType), balance);
+      await employee.save();
     }
     if (requestedDays > balance) {
       return res.status(400).json({ message: `Insufficient leave balance (${balance} day(s) remaining)` });
@@ -293,6 +301,22 @@ export const cancelMyLeaveRequest = async (req, res) => {
     await request.save();
 
     return res.json({ request });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+export const listCalendarEventsForEmployee = async (req, res) => {
+  try {
+    const { month, year } = req.query;
+    const filter = {};
+    if (month && year) {
+      const start = new Date(Number(year), Number(month) - 1, 1);
+      const end = new Date(Number(year), Number(month), 1);
+      filter.date = { $gte: start, $lt: end };
+    }
+    const events = await CalendarEvent.find(filter).sort({ date: 1 }).select("date type title description");
+    return res.json({ events });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }

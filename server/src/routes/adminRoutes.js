@@ -46,6 +46,12 @@ import {
   updateLeaveType
 } from "../controllers/leaveAdminController.js";
 import employeeAdminRoutes from "./employeeAdminRoutes.js";
+import {
+  createCalendarEvent,
+  deleteCalendarEvent,
+  listCalendarEvents,
+  updateCalendarEvent
+} from "../controllers/calendarAdminController.js";
 
 const router = Router();
 
@@ -100,5 +106,10 @@ router.put("/leave-types/:id", requireRole("superadmin", "hr"), updateLeaveType)
 
 router.get("/leave-requests", listLeaveRequests);
 router.put("/leave-requests/:id/review", requireRole("superadmin", "hr", "manager"), reviewLeaveRequest);
+
+router.get("/calendar-events", listCalendarEvents);
+router.post("/calendar-events", requireRole("superadmin", "hr"), createCalendarEvent);
+router.put("/calendar-events/:id", requireRole("superadmin", "hr"), updateCalendarEvent);
+router.delete("/calendar-events/:id", requireRole("superadmin", "hr"), deleteCalendarEvent);
 
 export default router;

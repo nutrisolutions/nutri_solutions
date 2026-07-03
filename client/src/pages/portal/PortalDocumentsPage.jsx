@@ -2,13 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { Briefcase, FileText, TrendingUp, Upload } from "lucide-react";
 import { employeeMyCompanyDocuments, employeeMyDocuments, employeeUploadDocument } from "../../lib/api";
 import { useEmployeeAuth } from "../../context/EmployeeAuthContext";
-
-const DOC_STATUS_META = {
-  pending: { label: "Pending", pill: "neutral" },
-  uploaded: { label: "Uploaded", pill: "info" },
-  verified: { label: "Verified", pill: "success" },
-  rejected: { label: "Rejected", pill: "danger" }
-};
+import { DOC_STATUS_META } from "../../lib/employeeStatus";
 
 const formatPeriod = (doc) =>
   doc.periodMonth && doc.periodYear
@@ -24,6 +18,7 @@ const PortalDocumentsPage = () => {
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState("");
   const [uploadingId, setUploadingId] = useState(null);
+  const [uploadProgress, setUploadProgress] = useState(0);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -46,15 +41,17 @@ const PortalDocumentsPage = () => {
   const handleUpload = async (docId, file) => {
     if (!file) return;
     setUploadingId(docId);
+    setUploadProgress(0);
     setMessage("");
     try {
-      await employeeUploadDocument(docId, file);
+      await employeeUploadDocument(docId, file, setUploadProgress);
       setMessage("Document uploaded");
       await load();
     } catch (err) {
       setMessage(err.response?.data?.message || "Upload failed");
     } finally {
       setUploadingId(null);
+      setUploadProgress(0);
     }
   };
 
@@ -195,16 +192,27 @@ const PortalDocumentsPage = () => {
                       View uploaded file
                     </a>
                   )}
-                  {canUpload && (
-                    <label className="btn btn-outline btn-sm" style={{ alignSelf: "flex-start" }}>
-                      <Upload size={14} /> {doc.status === "rejected" ? "Re-upload" : "Upload"}
-                      <input
-                        type="file"
-                        style={{ display: "none" }}
-                        disabled={uploadingId === doc._id}
-                        onChange={(e) => handleUpload(doc._id, e.target.files?.[0])}
-                      />
-                    </label>
+                  {uploadingId === doc._id ? (
+                    <div className="employee-doc-upload-progress">
+                      <div className="employee-doc-upload-progress-track">
+                        <div
+                          className="employee-doc-upload-progress-fill"
+                          style={{ width: `${uploadProgress}%` }}
+                        />
+                      </div>
+                      <span>Uploading… {uploadProgress}%</span>
+                    </div>
+                  ) : (
+                    canUpload && (
+                      <label className="btn btn-outline btn-sm" style={{ alignSelf: "flex-start" }}>
+                        <Upload size={14} /> {doc.status === "rejected" ? "Re-upload" : "Upload"}
+                        <input
+                          type="file"
+                          style={{ display: "none" }}
+                          onChange={(e) => handleUpload(doc._id, e.target.files?.[0])}
+                        />
+                      </label>
+                    )
                   )}
                 </div>
               );
