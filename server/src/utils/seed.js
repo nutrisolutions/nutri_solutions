@@ -18,6 +18,8 @@ const isDatabaseEmpty = async () => {
 };
 
 export const seedDatabase = async () => {
+  await Admin.updateMany({ role: { $exists: false } }, { $set: { role: "superadmin" } });
+
   const empty = await isDatabaseEmpty();
   if (!empty) return;
 
@@ -25,6 +27,6 @@ export const seedDatabase = async () => {
   const adminPassword = process.env.ADMIN_PASSWORD || "admin123";
   const passwordHash = await bcrypt.hash(adminPassword, 10);
 
-  await Admin.create({ email: adminEmail, passwordHash, name: "Site Admin" });
+  await Admin.create({ email: adminEmail, passwordHash, name: "Site Admin", role: "superadmin" });
   console.log(`Empty database — admin seeded: ${adminEmail}`);
 };

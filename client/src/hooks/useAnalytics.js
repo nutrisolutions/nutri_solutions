@@ -25,6 +25,15 @@ const useAnalytics = () => {
     }
 
     trackPageView(path);
+
+    if (typeof window.gtag === "function" && prevPath.current) {
+      window.gtag("event", "page_view", {
+        page_path: path,
+        page_location: window.location.href,
+        page_title: document.title
+      });
+    }
+
     prevPath.current = path;
     seenSections.current = new Set();
   }, [location.pathname]);

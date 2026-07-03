@@ -6,6 +6,8 @@ import { adminLogin } from "../../lib/api";
 import { useAuth } from "../../context/AuthContext";
 import BrandLogo from "../../components/ui/BrandLogo";
 import LoginCodeBackground from "../../components/admin/LoginCodeBackground";
+import { loginSchema } from "../../lib/validation";
+import { firstZodError } from "../../lib/zodHelpers";
 
 const AdminLoginPage = () => {
   const { login, isAuthenticated } = useAuth();
@@ -16,7 +18,7 @@ const AdminLoginPage = () => {
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
-  const from = location.state?.from || "/admin/projects";
+  const from = location.state?.from || "/admin/dashboard";
 
   if (isAuthenticated) {
     return <Navigate to={from} replace />;
@@ -25,6 +27,13 @@ const AdminLoginPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+
+    const validationError = firstZodError(loginSchema, { email, password });
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
+
     setSubmitting(true);
     try {
       const { token, admin } = await adminLogin(email, password);

@@ -37,6 +37,9 @@ export const submitContactInquiry = (data) => api.post("/api/contact", data).the
 export const adminLogin = (email, password) =>
   api.post("/api/auth/login", { email, password }).then((r) => r.data);
 
+export const unifiedLogin = (email, password) =>
+  api.post("/api/auth/unified-login", { email, password }).then((r) => r.data);
+
 export const adminMe = () => api.get("/api/auth/me").then((r) => r.data.admin);
 
 export const adminProjects = {
@@ -79,6 +82,134 @@ export const adminContact = {
   listInquiries: () => api.get("/api/admin/contact/inquiries").then((r) => r.data.inquiries),
   removeInquiry: (id) => api.delete(`/api/admin/contact/inquiries/${id}`)
 };
+
+export const adminDepartments = {
+  list: () => api.get("/api/admin/departments").then((r) => r.data.departments),
+  create: (data) => api.post("/api/admin/departments", data).then((r) => r.data.department),
+  update: (id, data) => api.put(`/api/admin/departments/${id}`, data).then((r) => r.data.department),
+  remove: (id) => api.delete(`/api/admin/departments/${id}`)
+};
+
+export const adminEmployees = {
+  list: (params) => api.get("/api/admin/employees", { params }).then((r) => r.data.employees),
+  get: (id) => api.get(`/api/admin/employees/${id}`).then((r) => r.data),
+  create: (data) => api.post("/api/admin/employees", data).then((r) => r.data),
+  createFromApplication: (applicationId, department) =>
+    api.post(`/api/admin/employees/from-application/${applicationId}`, { department }).then((r) => r.data),
+  resetPassword: (id) => api.post(`/api/admin/employees/${id}/reset-password`).then((r) => r.data),
+  listInterviews: (id) => api.get(`/api/admin/employees/${id}/interviews`).then((r) => r.data.interviews),
+  scheduleInterview: (id, data) => api.post(`/api/admin/employees/${id}/interviews`, data).then((r) => r.data),
+  markSelected: (id, note) => api.put(`/api/admin/employees/${id}/select`, { note }).then((r) => r.data.employee),
+  uploadCompanyDocument: (id, { type, label, periodMonth, periodYear, file }) => {
+    const formData = new FormData();
+    formData.append("type", type);
+    formData.append("label", label);
+    if (periodMonth) formData.append("periodMonth", periodMonth);
+    if (periodYear) formData.append("periodYear", periodYear);
+    formData.append("file", file);
+    return api
+      .post(`/api/admin/employees/${id}/company-documents`, formData, {
+        headers: { "Content-Type": "multipart/form-data" }
+      })
+      .then((r) => r.data.companyDocument);
+  },
+  requestDocuments: (id, labels) =>
+    api.post(`/api/admin/employees/${id}/documents`, { labels }).then((r) => r.data.documents),
+  reviewDocument: (employeeId, docId, decision, rejectionReason) =>
+    api
+      .put(`/api/admin/employees/${employeeId}/documents/${docId}/review`, { decision, rejectionReason })
+      .then((r) => r.data),
+  sendOffer: (id, offerLetterFile, joiningLetterFile) => {
+    const formData = new FormData();
+    formData.append("offerLetter", offerLetterFile);
+    formData.append("joiningLetter", joiningLetterFile);
+    return api
+      .post(`/api/admin/employees/${id}/offer`, formData, { headers: { "Content-Type": "multipart/form-data" } })
+      .then((r) => r.data.employee);
+  },
+  startOnboarding: (id, checklist) =>
+    api.put(`/api/admin/employees/${id}/onboarding/start`, { checklist }).then((r) => r.data.employee),
+  updateOnboardingItem: (id, itemIndex, completed) =>
+    api.put(`/api/admin/employees/${id}/onboarding/${itemIndex}`, { completed }).then((r) => r.data.employee),
+  completeOnboarding: (id) => api.put(`/api/admin/employees/${id}/onboarding/complete`).then((r) => r.data.employee),
+  convertToPermanent: (id) => api.put(`/api/admin/employees/${id}/convert-permanent`).then((r) => r.data.employee),
+  remove: (id) => api.delete(`/api/admin/employees/${id}`)
+};
+
+export const adminTasks = {
+  list: (params) => api.get("/api/admin/tasks", { params }).then((r) => r.data.tasks),
+  create: (data) => api.post("/api/admin/tasks", data).then((r) => r.data.task),
+  update: (id, data) => api.put(`/api/admin/tasks/${id}`, data).then((r) => r.data.task),
+  remove: (id) => api.delete(`/api/admin/tasks/${id}`)
+};
+
+export const adminLeave = {
+  listTypes: () => api.get("/api/admin/leave-types").then((r) => r.data.leaveTypes),
+  createType: (data) => api.post("/api/admin/leave-types", data).then((r) => r.data.leaveType),
+  updateType: (id, data) => api.put(`/api/admin/leave-types/${id}`, data).then((r) => r.data.leaveType),
+  listRequests: (params) => api.get("/api/admin/leave-requests", { params }).then((r) => r.data.requests),
+  reviewRequest: (id, decision, reviewNote) =>
+    api.put(`/api/admin/leave-requests/${id}/review`, { decision, reviewNote }).then((r) => r.data.request)
+};
+
+const employeeApi = axios.create({ baseURL: API_BASE, headers: { "Content-Type": "application/json" } });
+
+export const setEmployeeAuthToken = (token) => {
+  if (token) {
+    employeeApi.defaults.headers.common.Authorization = `Bearer ${token}`;
+  } else {
+    delete employeeApi.defaults.headers.common.Authorization;
+  }
+};
+
+export const employeeLogin = (email, password) =>
+  employeeApi.post("/api/employees/login", { email, password }).then((r) => r.data);
+
+export const employeeSetPassword = (currentPassword, newPassword) =>
+  employeeApi.post("/api/employees/set-password", { currentPassword, newPassword }).then((r) => r.data);
+
+export const employeeMe = () => employeeApi.get("/api/employees/me").then((r) => r.data.employee);
+
+export const employeeMyInterviews = () => employeeApi.get("/api/employees/me/interviews").then((r) => r.data.interviews);
+
+export const employeeMyDocuments = () => employeeApi.get("/api/employees/me/documents").then((r) => r.data.documents);
+
+export const employeeMyCompanyDocuments = () =>
+  employeeApi.get("/api/employees/me/company-documents").then((r) => r.data.companyDocuments);
+
+export const employeeUploadDocument = (docId, file) => {
+  const formData = new FormData();
+  formData.append("file", file);
+  return employeeApi
+    .post(`/api/employees/me/documents/${docId}/upload`, formData, {
+      headers: { "Content-Type": "multipart/form-data" }
+    })
+    .then((r) => r.data.document);
+};
+
+export const employeeOffer = () => employeeApi.get("/api/employees/me/offer").then((r) => r.data.employee);
+
+export const employeeAcceptOffer = () => employeeApi.post("/api/employees/me/offer/accept").then((r) => r.data.employee);
+
+export const employeeNotifications = () =>
+  employeeApi.get("/api/employees/me/notifications").then((r) => r.data.notifications);
+
+export const employeeMyTasks = () => employeeApi.get("/api/employees/me/tasks").then((r) => r.data.tasks);
+
+export const employeeUpdateTaskStatus = (id, status) =>
+  employeeApi.put(`/api/employees/me/tasks/${id}/status`, { status }).then((r) => r.data.task);
+
+export const employeeLeaveTypes = () =>
+  employeeApi.get("/api/employees/me/leave-types").then((r) => r.data.leaveTypes);
+
+export const employeeMyLeaveRequests = () =>
+  employeeApi.get("/api/employees/me/leave-requests").then((r) => r.data.requests);
+
+export const employeeCreateLeaveRequest = (data) =>
+  employeeApi.post("/api/employees/me/leave-requests", data).then((r) => r.data.request);
+
+export const employeeCancelLeaveRequest = (id) =>
+  employeeApi.put(`/api/employees/me/leave-requests/${id}/cancel`).then((r) => r.data.request);
 
 export const adminUpload = {
   image: (file) => {

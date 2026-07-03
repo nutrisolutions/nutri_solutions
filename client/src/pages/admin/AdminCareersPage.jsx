@@ -12,7 +12,7 @@ import {
   Trash2,
   User
 } from "lucide-react";
-import { adminCareers } from "../../lib/api";
+import { adminCareers, adminEmployees } from "../../lib/api";
 import CopyLinkButton from "../../components/admin/CopyLinkButton";
 
 const EMPLOYMENT_TYPES = ["Full-time", "Part-time", "Contract", "Internship"];
@@ -135,6 +135,7 @@ const AdminCareersPage = () => {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(true);
   const [appsLoading, setAppsLoading] = useState(false);
+  const [tempPasswordInfo, setTempPasswordInfo] = useState(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -233,6 +234,18 @@ const AdminCareersPage = () => {
     if (selected) await openDetail(selected);
   };
 
+  const handleCreateEmployee = async (applicationId) => {
+    setMessage("");
+    setTempPasswordInfo(null);
+    try {
+      const { tempPassword } = await adminEmployees.createFromApplication(applicationId);
+      setTempPasswordInfo(tempPassword);
+      setMessage("Employee created. Share the one-time temporary password below with them.");
+    } catch (err) {
+      setMessage(err.response?.data?.message || "Failed to create employee");
+    }
+  };
+
   return (
     <div className="admin-page admin-careers-page">
       <header className="admin-page-header">
@@ -261,6 +274,12 @@ const AdminCareersPage = () => {
       </header>
 
       {message && <p className="admin-message">{message}</p>}
+      {tempPasswordInfo && (
+        <p className="admin-message">
+          One-time temporary password (share with the employee now — it will not be shown again):{" "}
+          <strong>{tempPasswordInfo}</strong>
+        </p>
+      )}
 
       {view === "form" && (
         <AdminPositionForm
@@ -408,13 +427,22 @@ const AdminCareersPage = () => {
                           <h4>Cover letter</h4>
                           <p>{app.coverLetter}</p>
                         </div>
-                        <button
-                          type="button"
-                          className="btn btn-outline btn-sm"
-                          onClick={() => handleDeleteApplication(app._id)}
-                        >
-                          <Trash2 size={14} /> Delete application
-                        </button>
+                        <div className="admin-form-actions">
+                          <button
+                            type="button"
+                            className="btn btn-primary btn-sm"
+                            onClick={() => handleCreateEmployee(app._id)}
+                          >
+                            Create employee
+                          </button>
+                          <button
+                            type="button"
+                            className="btn btn-outline btn-sm"
+                            onClick={() => handleDeleteApplication(app._id)}
+                          >
+                            <Trash2 size={14} /> Delete application
+                          </button>
+                        </div>
                       </div>
                     )}
                   </article>

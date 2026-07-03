@@ -1,6 +1,9 @@
 import { useState } from "react";
 import { Send } from "lucide-react";
 import { submitCareerApplication } from "../../lib/api";
+import { careerApplySchema } from "../../lib/validation";
+import { firstZodError } from "../../lib/zodHelpers";
+import { onlyDigits } from "../../lib/phoneInput";
 
 const emptyForm = {
   fullName: "",
@@ -22,10 +25,22 @@ const CareerApplyForm = ({ slug, positionTitle }) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
+  const handlePhoneChange = (e) => {
+    setForm({ ...form, phone: onlyDigits(e.target.value) });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setStatus("submitting");
     setError("");
+
+    const validationError = firstZodError(careerApplySchema, form);
+    if (validationError) {
+      setStatus("error");
+      setError(validationError);
+      return;
+    }
+
+    setStatus("submitting");
     try {
       await submitCareerApplication(slug, form);
       setStatus("success");
@@ -101,11 +116,14 @@ const CareerApplyForm = ({ slug, positionTitle }) => {
               id="career-phone"
               name="phone"
               type="tel"
+              inputMode="numeric"
+              pattern="[0-9]*"
+              maxLength={10}
               value={form.phone}
-              onChange={handleChange}
+              onChange={handlePhoneChange}
               required
               autoComplete="tel"
-              placeholder="98765 43210"
+              placeholder="9876543210"
             />
           </div>
         </label>

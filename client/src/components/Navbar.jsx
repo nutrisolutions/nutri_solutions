@@ -4,12 +4,20 @@ import { ChevronDown, Menu, X } from "lucide-react";
 import { Link, NavLink, useLocation } from "react-router-dom";
 import BrandLogo from "./ui/BrandLogo";
 import { navLinks, serviceNavLinks } from "../data/content";
+import { useAuth } from "../context/AuthContext";
+import { useEmployeeAuth } from "../context/EmployeeAuthContext";
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
   const location = useLocation();
+  const { isAuthenticated: isAdminAuthenticated } = useAuth();
+  const { isAuthenticated: isEmployeeAuthenticated } = useEmployeeAuth();
+  const isLoggedIn = isAdminAuthenticated || isEmployeeAuthenticated;
+  const authCta = isLoggedIn
+    ? { to: isAdminAuthenticated ? "/admin" : "/portal/dashboard", label: "Go to Portal" }
+    : { to: "/login", label: "Login" };
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12);
@@ -79,6 +87,9 @@ const Navbar = () => {
         </nav>
 
         <div className="navbar-actions">
+          <Link to={authCta.to} className="btn btn-outline btn-sm navbar-cta-desktop">
+            {authCta.label}
+          </Link>
           <Link to="/contact" className="btn btn-dark btn-sm navbar-cta-desktop">
             Talk to us
           </Link>
@@ -150,6 +161,9 @@ const Navbar = () => {
                   </NavLink>
                 )
               )}
+              <Link to={authCta.to} className="btn btn-outline btn-sm">
+                {authCta.label}
+              </Link>
               <Link to="/contact" className="btn btn-dark btn-sm">
                 Talk to us
               </Link>

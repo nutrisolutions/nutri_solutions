@@ -1,6 +1,10 @@
+// Must run before any other import — several modules (e.g. config/cloudinary.js)
+// read process.env at import time, so dotenv has to populate it first.
+import "dotenv/config";
+
 import cors from "cors";
-import dotenv from "dotenv";
 import express from "express";
+import morgan from "morgan";
 import path from "path";
 import { fileURLToPath } from "url";
 import { connectDb } from "./config/db.js";
@@ -13,13 +17,16 @@ import careerRoutes from "./routes/careerRoutes.js";
 import contactRoutes from "./routes/contactRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
 import analyticsRoutes from "./routes/analyticsRoutes.js";
+import employeeRoutes from "./routes/employeeRoutes.js";
 import { seedDatabase } from "./utils/seed.js";
-
-dotenv.config();
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
 const PORT = process.env.PORT || 5000;
+
+if (process.env.NODE_ENV !== "production") {
+  app.use(morgan("dev"));
+}
 
 app.use(
   cors({
@@ -42,6 +49,7 @@ app.use("/api/careers", careerRoutes);
 app.use("/api/contact", contactRoutes);
 app.use("/api/analytics", analyticsRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/employees", employeeRoutes);
 
 connectDb()
   .then(async () => {

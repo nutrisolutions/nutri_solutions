@@ -3,6 +3,7 @@ import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import App from "./App";
 import { AuthProvider } from "./context/AuthContext";
+import { EmployeeAuthProvider } from "./context/EmployeeAuthContext";
 import "lenis/dist/lenis.css";
 import "./styles/global.css";
 import "./styles/redesign.css";
@@ -12,7 +13,9 @@ ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <BrowserRouter>
       <AuthProvider>
-        <App />
+        <EmployeeAuthProvider>
+          <App />
+        </EmployeeAuthProvider>
       </AuthProvider>
     </BrowserRouter>
   </React.StrictMode>

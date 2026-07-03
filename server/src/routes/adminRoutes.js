@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { requireAuth } from "../middleware/auth.js";
+import { requireAuth, requireRole } from "../middleware/auth.js";
 import {
   createProject,
   deleteProject,
@@ -31,6 +31,21 @@ import {
 import { deleteInquiry, listInquiries } from "../controllers/contactController.js";
 import { handleUpload, uploadImage, uploadImages } from "../controllers/uploadController.js";
 import { uploadMultiple, uploadSingle } from "../middleware/upload.js";
+import {
+  createDepartment,
+  deleteDepartment,
+  listDepartments,
+  updateDepartment
+} from "../controllers/departmentController.js";
+import { createTask, deleteTask, listTasks, updateTask } from "../controllers/taskAdminController.js";
+import {
+  createLeaveType,
+  listLeaveRequests,
+  listLeaveTypes,
+  reviewLeaveRequest,
+  updateLeaveType
+} from "../controllers/leaveAdminController.js";
+import employeeAdminRoutes from "./employeeAdminRoutes.js";
 
 const router = Router();
 
@@ -66,5 +81,24 @@ router.delete("/careers/applications/:id", deleteApplication);
 
 router.get("/contact/inquiries", listInquiries);
 router.delete("/contact/inquiries/:id", deleteInquiry);
+
+router.get("/departments", listDepartments);
+router.post("/departments", requireRole("superadmin", "hr"), createDepartment);
+router.put("/departments/:id", requireRole("superadmin", "hr"), updateDepartment);
+router.delete("/departments/:id", requireRole("superadmin", "hr"), deleteDepartment);
+
+router.use("/employees", employeeAdminRoutes);
+
+router.get("/tasks", listTasks);
+router.post("/tasks", requireRole("superadmin", "hr", "manager"), createTask);
+router.put("/tasks/:id", requireRole("superadmin", "hr", "manager"), updateTask);
+router.delete("/tasks/:id", requireRole("superadmin", "hr"), deleteTask);
+
+router.get("/leave-types", listLeaveTypes);
+router.post("/leave-types", requireRole("superadmin", "hr"), createLeaveType);
+router.put("/leave-types/:id", requireRole("superadmin", "hr"), updateLeaveType);
+
+router.get("/leave-requests", listLeaveRequests);
+router.put("/leave-requests/:id/review", requireRole("superadmin", "hr", "manager"), reviewLeaveRequest);
 
 export default router;

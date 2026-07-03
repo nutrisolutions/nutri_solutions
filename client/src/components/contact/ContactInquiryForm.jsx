@@ -3,6 +3,9 @@ import { motion } from "framer-motion";
 import { Send } from "lucide-react";
 import { contactPageContent } from "../../data/content";
 import { submitContactInquiry } from "../../lib/api";
+import { contactInquirySchema } from "../../lib/validation";
+import { firstZodError } from "../../lib/zodHelpers";
+import { onlyDigits } from "../../lib/phoneInput";
 
 const emptyForm = {
   fullName: "",
@@ -23,10 +26,22 @@ const ContactInquiryForm = () => {
     setFields({ ...fields, [e.target.name]: e.target.value });
   };
 
+  const handlePhoneChange = (e) => {
+    setFields({ ...fields, phone: onlyDigits(e.target.value) });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setStatus("submitting");
     setError("");
+
+    const validationError = firstZodError(contactInquirySchema, fields);
+    if (validationError) {
+      setStatus("error");
+      setError(validationError);
+      return;
+    }
+
+    setStatus("submitting");
     try {
       await submitContactInquiry(fields);
       setStatus("success");
@@ -108,10 +123,13 @@ const ContactInquiryForm = () => {
               id="contact-phone"
               name="phone"
               type="tel"
+              inputMode="numeric"
+              pattern="[0-9]*"
+              maxLength={10}
               value={fields.phone}
-              onChange={handleChange}
+              onChange={handlePhoneChange}
               autoComplete="tel"
-              placeholder="98765 43210"
+              placeholder="9876543210"
             />
           </div>
         </label>
