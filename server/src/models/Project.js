@@ -21,6 +21,8 @@ const projectSchema = new mongoose.Schema(
     screenshots: [{ type: String }],
     /** Screenshot shown inside device frame on home page marquee */
     homeMockupImage: { type: String, default: "" },
+    liveDemoAvailable: { type: Boolean, default: false },
+    liveDemoLink: { type: String, default: "" },
     published: { type: Boolean, default: true },
     featured: { type: Boolean, default: false },
     order: { type: Number, default: 0 }

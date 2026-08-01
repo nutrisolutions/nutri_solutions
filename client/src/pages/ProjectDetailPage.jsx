@@ -69,6 +69,16 @@ const ProjectDetailPage = () => {
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
             <span className="project-detail-type">{project.applicationType}</span>
             <h1>{project.title}</h1>
+            {project.liveDemoAvailable && project.liveDemoLink && (
+              <a
+                href={project.liveDemoLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn btn-primary project-detail-live-demo"
+              >
+                <Globe size={18} /> View Live Demo
+              </a>
+            )}
           </motion.div>
         </div>
       </section>

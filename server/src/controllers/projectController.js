@@ -59,6 +59,8 @@ export const createProject = async (req, res) => {
       techStack: parseList(body.techStack),
       screenshots: parseList(body.screenshots),
       homeMockupImage: body.homeMockupImage?.trim() || "",
+      liveDemoAvailable: Boolean(body.liveDemoAvailable),
+      liveDemoLink: Boolean(body.liveDemoAvailable) ? body.liveDemoLink?.trim() || "" : "",
       published: body.published !== false,
       featured: Boolean(body.featured),
       order: Number(body.order) || 0
@@ -84,6 +86,8 @@ export const updateProject = async (req, res) => {
       techStack: parseList(body.techStack),
       screenshots: parseList(body.screenshots),
       homeMockupImage: body.homeMockupImage?.trim() || "",
+      liveDemoAvailable: Boolean(body.liveDemoAvailable),
+      liveDemoLink: Boolean(body.liveDemoAvailable) ? body.liveDemoLink?.trim() || "" : "",
       published: body.published,
       featured: body.featured,
       order: Number(body.order) || 0

@@ -28,6 +28,8 @@ const emptyForm = {
   techStack: [],
   screenshots: [],
   homeMockupImage: "",
+  liveDemoAvailable: false,
+  liveDemoLink: "",
   published: true,
   featured: false,
   order: 0
@@ -43,6 +45,8 @@ const projectToForm = (p) => ({
   techStack: p.techStack || [],
   screenshots: p.screenshots || [],
   homeMockupImage: p.homeMockupImage || "",
+  liveDemoAvailable: p.liveDemoAvailable || false,
+  liveDemoLink: p.liveDemoLink || "",
   published: p.published,
   featured: p.featured,
   order: p.order || 0
@@ -105,6 +109,32 @@ const AdminProjectForm = ({ form, setForm, editingId, onSubmit, onCancel }) => (
         applicationType={form.applicationType}
       />
       <ScreenshotField value={form.screenshots} onChange={(screenshots) => setForm({ ...form, screenshots })} />
+      <label className="admin-form-full admin-toggle-field">
+        <span className="admin-toggle-label">
+          <input
+            type="checkbox"
+            role="switch"
+            checked={form.liveDemoAvailable}
+            onChange={(e) =>
+              setForm({
+                ...form,
+                liveDemoAvailable: e.target.checked,
+                liveDemoLink: e.target.checked ? form.liveDemoLink : ""
+              })
+            }
+          />
+          Live demo available
+        </span>
+        {form.liveDemoAvailable && (
+          <input
+            type="url"
+            value={form.liveDemoLink}
+            onChange={(e) => setForm({ ...form, liveDemoLink: e.target.value })}
+            placeholder="https://your-live-demo-url.com"
+            required={form.liveDemoAvailable}
+          />
+        )}
+      </label>
     </div>
     <div className="admin-form-checks">
       <label>
@@ -352,6 +382,16 @@ const AdminProjectsPage = () => {
                   </span>
                 )}
                 <span className="admin-status-pill">{selected.applicationType}</span>
+                {selected.liveDemoAvailable && (
+                  <a
+                    className="admin-status-pill admin-status-pill--live"
+                    href={selected.liveDemoLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Live demo
+                  </a>
+                )}
               </div>
               <h2>{selected.title}</h2>
               <p className="admin-project-detail-slug">/{selected.slug}</p>
