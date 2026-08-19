@@ -5,6 +5,7 @@ import SeoHead from "../SeoHead";
 import PageTransition from "./PageTransition";
 import AnalyticsTracker from "../analytics/AnalyticsTracker";
 import useScrollToTop from "../../hooks/useScrollToTop";
+import { SiteSettingsProvider } from "../../context/SiteSettingsContext";
 
 const AppLayout = () => {
   const { pathname } = useLocation();
@@ -16,13 +17,15 @@ const AppLayout = () => {
       : pathname.replace(/^\//, "").split("/")[0] || "home";
 
   return (
-    <div className="app-shell">
-      <AnalyticsTracker />
-      <SeoHead page={seoKey} />
-      <Navbar />
-      <PageTransition />
-      <Footer />
-    </div>
+    <SiteSettingsProvider>
+      <div className="app-shell">
+        <AnalyticsTracker />
+        <SeoHead page={seoKey} />
+        <Navbar />
+        <PageTransition />
+        <Footer />
+      </div>
+    </SiteSettingsProvider>
   );
 };
 

@@ -2,9 +2,12 @@ import { motion } from "framer-motion";
 import { Mail, MapPin, Phone } from "lucide-react";
 import SectionHeader from "../ui/SectionHeader";
 import SectionPageLink from "./SectionPageLink";
-import { contactInfo } from "../../data/content";
+import { useSiteSettings } from "../../context/SiteSettingsContext";
 
-const HomeContactPreview = () => (
+const HomeContactPreview = () => {
+  const contact = useSiteSettings();
+
+  return (
   <section id="contact-preview" className="section home-contact-preview">
     <div className="container">
       <div className="home-contact-card">
@@ -18,15 +21,15 @@ const HomeContactPreview = () => (
           <ul className="home-contact-details">
             <li>
               <Mail size={18} />
-              <a href={`mailto:${contactInfo.email}`}>{contactInfo.email}</a>
+              <a href={`mailto:${contact.email}`}>{contact.email}</a>
             </li>
             <li>
               <Phone size={18} />
-              <a href={`tel:${contactInfo.phoneTel}`}>{contactInfo.phone}</a>
+              <a href={`tel:${contact.phoneTel}`}>{contact.phone}</a>
             </li>
             <li>
               <MapPin size={18} />
-              <span>{contactInfo.address}</span>
+              <span>{contact.address}</span>
             </li>
           </ul>
           <SectionPageLink to="/contact">Go to contact page</SectionPageLink>
@@ -38,7 +41,7 @@ const HomeContactPreview = () => (
           viewport={{ once: true }}
         >
           <img
-            src={contactInfo.previewImage}
+            src={contact.previewImage}
             alt="Free Demo session at Nutri Solutions"
             loading="lazy"
           />
@@ -46,6 +49,7 @@ const HomeContactPreview = () => (
       </div>
     </div>
   </section>
-);
+  );
+};
 
 export default HomeContactPreview;

@@ -29,6 +29,7 @@ import {
   updatePosition
 } from "../controllers/careerController.js";
 import { deleteInquiry, listInquiries } from "../controllers/contactController.js";
+import { getAdminSettings, updateSettings } from "../controllers/settingsController.js";
 import { handleUpload, uploadImage, uploadImages } from "../controllers/uploadController.js";
 import { uploadMultiple, uploadSingle } from "../middleware/upload.js";
 
@@ -66,5 +67,8 @@ router.delete("/careers/applications/:id", deleteApplication);
 
 router.get("/contact/inquiries", listInquiries);
 router.delete("/contact/inquiries/:id", deleteInquiry);
+
+router.get("/settings", getAdminSettings);
+router.put("/settings", updateSettings);
 
 export default router;

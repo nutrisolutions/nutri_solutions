@@ -4,6 +4,7 @@ import Project from "../models/Project.js";
 import Blog from "../models/Blog.js";
 import TechStack from "../models/TechStack.js";
 import JobPosition from "../models/JobPosition.js";
+import { getOrCreateSiteSettings } from "../controllers/settingsController.js";
 
 const isDatabaseEmpty = async () => {
   const [admins, projects, blogs, tech, careers] = await Promise.all([
@@ -18,6 +19,8 @@ const isDatabaseEmpty = async () => {
 };
 
 export const seedDatabase = async () => {
+  await getOrCreateSiteSettings();
+
   const empty = await isDatabaseEmpty();
   if (!empty) return;
 

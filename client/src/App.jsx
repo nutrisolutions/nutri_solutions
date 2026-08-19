@@ -21,6 +21,7 @@ import AdminDashboardPage from "./pages/admin/AdminDashboardPage";
 import AdminAnalyticsPage from "./pages/admin/AdminAnalyticsPage";
 import AdminCareersPage from "./pages/admin/AdminCareersPage";
 import AdminContactPage from "./pages/admin/AdminContactPage";
+import AdminSettingsPage from "./pages/admin/AdminSettingsPage";
 import useSmoothScroll from "./hooks/useSmoothScroll";
 
 const App = () => {
@@ -45,6 +46,7 @@ const App = () => {
         <Route path="tech-stack" element={<AdminTechStackPage />} />
         <Route path="careers" element={<AdminCareersPage />} />
         <Route path="contact" element={<AdminContactPage />} />
+        <Route path="settings" element={<AdminSettingsPage />} />
       </Route>
 
       <Route element={<AppLayout />}>

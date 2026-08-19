@@ -1,26 +1,7 @@
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import { contactInfo, pageSeo, seo } from "../data/content";
-
-const organizationSchema = {
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  name: "Nutri Solutions Private Limited",
-  url: seo.siteUrl,
-  description: seo.description,
-  email: contactInfo.email,
-  telephone: contactInfo.phoneTel,
-  address: {
-    "@type": "PostalAddress",
-    streetAddress: "Orbit, Plot No 30/C, Sy No 83/1, Raidurgam, Knowledge City Rd",
-    addressLocality: "Hyderabad",
-    addressRegion: "Telangana",
-    postalCode: "500032",
-    addressCountry: "IN"
-  },
-  areaServed: "IN",
-  sameAs: []
-};
+import { pageSeo, seo } from "../data/content";
+import { useSiteSettings } from "../context/SiteSettingsContext";
 
 const serviceSchema = {
   "@context": "https://schema.org",
@@ -38,6 +19,7 @@ const serviceSchema = {
 
 const SeoHead = ({ page = "home" }) => {
   const { pathname } = useLocation();
+  const contact = useSiteSettings();
   const pageKey = page || (pathname === "/" ? "home" : pathname.replace(/^\//, "").split("/")[0]);
   const meta = pageSeo[pageKey] || pageSeo.home;
 
@@ -72,8 +54,28 @@ const SeoHead = ({ page = "home" }) => {
       script.type = "application/ld+json";
       document.head.appendChild(script);
     }
+    const organizationSchema = {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      name: "Nutri Solutions Private Limited",
+      url: seo.siteUrl,
+      description: seo.description,
+      email: contact.email,
+      telephone: contact.phoneTel,
+      address: {
+        "@type": "PostalAddress",
+        streetAddress: contact.streetAddress || contact.address,
+        addressLocality: contact.addressLocality,
+        addressRegion: contact.addressRegion,
+        postalCode: contact.postalCode,
+        addressCountry: contact.addressCountry || "IN"
+      },
+      areaServed: contact.addressCountry || "IN",
+      sameAs: (contact.socialLinks || []).map((link) => link.url).filter(Boolean)
+    };
+
     script.textContent = JSON.stringify([organizationSchema, serviceSchema]);
-  }, [meta, pathname]);
+  }, [meta, pathname, contact]);
 
   return null;
 };

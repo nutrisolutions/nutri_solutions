@@ -10,7 +10,8 @@ import {
   LayoutDashboard,
   LogOut,
   MessageSquare,
-  Newspaper
+  Newspaper,
+  Settings
 } from "lucide-react";
 import BrandLogo from "../ui/BrandLogo";
 import { useAuth } from "../../context/AuthContext";
@@ -25,7 +26,8 @@ const groups = [
     links: [
       { to: "/admin/projects", label: "Projects", icon: FolderKanban },
       { to: "/admin/blogs", label: "Blogs", icon: Newspaper },
-      { to: "/admin/tech-stack", label: "Tech Stack", icon: Layers }
+      { to: "/admin/tech-stack", label: "Tech Stack", icon: Layers },
+      { to: "/admin/settings", label: "Site contact", icon: Settings }
     ]
   },
   {

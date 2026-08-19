@@ -1,11 +1,15 @@
 import { Link } from "react-router-dom";
 import { ArrowUpRight, Facebook, Instagram, Linkedin, Mail, MapPin, Phone } from "lucide-react";
 import BrandLogo from "./ui/BrandLogo";
-import { contactInfo, navLinks, serviceNavLinks, socialLinks } from "../data/content";
+import { navLinks, serviceNavLinks } from "../data/content";
+import { useSiteSettings } from "../context/SiteSettingsContext";
 
 const SOCIAL_ICONS = { instagram: Instagram, facebook: Facebook, linkedin: Linkedin };
 
 const Footer = () => {
+  const contact = useSiteSettings();
+  const socialLinks = contact.socialLinks || [];
+
   return (
     <footer className="footer protoz-footer">
       <div className="container protoz-footer-top">
@@ -24,6 +28,7 @@ const Footer = () => {
           <div className="protoz-footer-social">
             {socialLinks.map((social) => {
               const Icon = SOCIAL_ICONS[social.icon];
+              if (!Icon) return null;
               return (
                 <a
                   key={social.label}
@@ -59,17 +64,17 @@ const Footer = () => {
           </div>
           <div>
             <h4>Contact</h4>
-            <a href={`mailto:${contactInfo.email}`} className="protoz-footer-contact-item">
+            <a href={`mailto:${contact.email}`} className="protoz-footer-contact-item">
               <Mail size={15} aria-hidden="true" />
-              <span>{contactInfo.email}</span>
+              <span>{contact.email}</span>
             </a>
-            <a href={`tel:${contactInfo.phoneTel}`} className="protoz-footer-contact-item">
+            <a href={`tel:${contact.phoneTel}`} className="protoz-footer-contact-item">
               <Phone size={15} aria-hidden="true" />
-              <span>{contactInfo.phone}</span>
+              <span>{contact.phone}</span>
             </a>
             <p className="protoz-footer-contact-item protoz-footer-address">
               <MapPin size={15} aria-hidden="true" />
-              <span>{contactInfo.address}</span>
+              <span>{contact.address}</span>
             </p>
           </div>
         </div>

@@ -1,6 +1,7 @@
 import { Briefcase, Clock, Mail, MapPin, Phone } from "lucide-react";
 import { Link } from "react-router-dom";
-import { contactInfo, contactPageContent } from "../../data/content";
+import { contactPageContent } from "../../data/content";
+import { useSiteSettings } from "../../context/SiteSettingsContext";
 
 const channelIcons = {
   mail: Mail,
@@ -11,6 +12,9 @@ const channelIcons = {
 };
 
 const ContactChannels = () => {
+  const contact = useSiteSettings();
+  const officeCity = contact.addressLocality || "Hyderabad";
+
   const channels = [
     {
       id: "email",
@@ -18,8 +22,8 @@ const ContactChannels = () => {
       title: "Email",
       description: "Best for detailed briefs, attachments, and follow-ups.",
       action: (
-        <a href={`mailto:${contactInfo.email}`} className="contact-channel-link">
-          {contactInfo.email}
+        <a href={`mailto:${contact.email}`} className="contact-channel-link">
+          {contact.email}
         </a>
       )
     },
@@ -29,8 +33,8 @@ const ContactChannels = () => {
       title: "Phone",
       description: "Call us for quick questions or to schedule a Free Demo.",
       action: (
-        <a href={`tel:${contactInfo.phoneTel}`} className="contact-channel-link">
-          {contactInfo.phone}
+        <a href={`tel:${contact.phoneTel}`} className="contact-channel-link">
+          {contact.phone}
         </a>
       )
     },
@@ -38,16 +42,18 @@ const ContactChannels = () => {
       id: "office",
       icon: "map",
       title: "Visit us",
-      description: "Meet the team at our Orbit office on Knowledge City Road, Hyderabad.",
-      action: (
+      description: `Meet the team at our office in ${officeCity}.`,
+      action: contact.mapUrl ? (
         <a
-          href={contactInfo.mapUrl}
+          href={contact.mapUrl}
           target="_blank"
           rel="noopener noreferrer"
           className="contact-channel-link"
         >
-          {contactInfo.address}
+          {contact.address}
         </a>
+      ) : (
+        <span className="contact-channel-meta">{contact.address}</span>
       )
     },
     {

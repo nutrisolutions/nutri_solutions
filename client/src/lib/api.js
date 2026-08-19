@@ -34,6 +34,8 @@ export const submitCareerApplication = (slug, data) =>
 
 export const submitContactInquiry = (data) => api.post("/api/contact", data).then((r) => r.data);
 
+export const fetchSiteSettings = () => api.get("/api/content/settings").then((r) => r.data.settings);
+
 export const adminLogin = (email, password) =>
   api.post("/api/auth/login", { email, password }).then((r) => r.data);
 
@@ -78,6 +80,11 @@ export const adminCareers = {
 export const adminContact = {
   listInquiries: () => api.get("/api/admin/contact/inquiries").then((r) => r.data.inquiries),
   removeInquiry: (id) => api.delete(`/api/admin/contact/inquiries/${id}`)
+};
+
+export const adminSettings = {
+  get: () => api.get("/api/admin/settings").then((r) => r.data.settings),
+  update: (data) => api.put("/api/admin/settings", data).then((r) => r.data.settings)
 };
 
 export const adminUpload = {
