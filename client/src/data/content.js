@@ -59,6 +59,16 @@ export const pageSeo = {
     title: "Careers | Join Nutri Solutions",
     description:
       "Life at Nutri Solutions — culture, perks, hybrid work, learning budget, and open software engineering & design roles in Hyderabad."
+  },
+  terms: {
+    title: "Terms & Conditions | Nutri Solutions",
+    description:
+      "Terms and conditions for using the Nutri Solutions website and engaging our software development services."
+  },
+  "privacy-policy": {
+    title: "Privacy Policy | Nutri Solutions",
+    description:
+      "How Nutri Solutions collects, uses, and protects personal information when you visit our website or contact us."
   }
 };
 
@@ -771,3 +781,154 @@ export const serviceNavLinks = defaultServices.map(({ slug, title }) => ({
   label: title,
   to: `/services/${slug}`
 }));
+
+export const legalPages = {
+  terms: {
+    label: "LEGAL",
+    title: "Terms & Conditions",
+    updated: "August 2026",
+    intro:
+      "These Terms & Conditions govern your use of the Nutri Solutions Private Limited website and describe the basis on which we provide software development and related services.",
+    sections: [
+      {
+        title: "1. About us",
+        paragraphs: [
+          "Nutri Solutions Private Limited (“Nutri Solutions”, “we”, “us”, or “our”) provides custom software development, web and mobile application development, cloud, and related IT services.",
+          "By accessing this website or requesting a Free Demo, proposal, or engagement, you agree to these terms. If you do not agree, please do not use the site."
+        ]
+      },
+      {
+        title: "2. Website use",
+        paragraphs: [
+          "You may browse this website for informational purposes. You agree not to misuse the site, attempt unauthorized access, scrape content in a way that harms performance, or use our materials for unlawful purposes.",
+          "We may update, suspend, or discontinue any part of the website without notice. Content is provided for general information and does not create a binding contract until a separate written agreement is signed."
+        ]
+      },
+      {
+        title: "3. Inquiries and proposals",
+        paragraphs: [
+          "Submitting a contact form, career application, or inquiry does not obligate either party to enter a commercial relationship. Estimates, timelines, and scope shared in demos or conversations are indicative until confirmed in a statement of work, proposal, or contract.",
+          "You are responsible for the accuracy of information you provide. Do not submit confidential third-party data unless you have the right to share it."
+        ]
+      },
+      {
+        title: "4. Intellectual property",
+        paragraphs: [
+          "Website design, branding, text, graphics, and other materials on this site are owned by Nutri Solutions or its licensors and are protected by applicable intellectual property laws.",
+          "You may not copy, modify, distribute, or commercially exploit site content without our prior written consent, except for personal, non-commercial viewing."
+        ]
+      },
+      {
+        title: "5. Client projects",
+        paragraphs: [
+          "Delivery of software services is governed by the specific agreement, proposal, or statement of work between Nutri Solutions and the client. Those documents prevail over these website terms for project scope, fees, IP ownership, warranties, and support.",
+          "Unless otherwise agreed in writing, pre-existing tools, frameworks, libraries, and methodologies remain Nutri Solutions’ property or that of their respective owners."
+        ]
+      },
+      {
+        title: "6. Third-party links",
+        paragraphs: [
+          "Our website may link to third-party sites (for example social profiles or maps). We are not responsible for the content, privacy practices, or availability of those sites."
+        ]
+      },
+      {
+        title: "7. Disclaimer and limitation of liability",
+        paragraphs: [
+          "The website and its content are provided “as is” without warranties of any kind, express or implied, to the fullest extent permitted by law.",
+          "To the maximum extent permitted by applicable law, Nutri Solutions is not liable for any indirect, incidental, special, or consequential damages arising from your use of the website. Nothing in these terms excludes liability that cannot be excluded under Indian law."
+        ]
+      },
+      {
+        title: "8. Changes",
+        paragraphs: [
+          "We may revise these Terms & Conditions from time to time. The “Last updated” date on this page reflects the latest revision. Continued use of the website after changes constitutes acceptance of the updated terms."
+        ]
+      },
+      {
+        title: "9. Governing law",
+        paragraphs: [
+          "These terms are governed by the laws of India. Courts in Hyderabad, Telangana shall have exclusive jurisdiction, subject to mandatory consumer protections where applicable."
+        ]
+      },
+      {
+        title: "10. Contact",
+        paragraphs: [
+          "Questions about these Terms & Conditions can be sent via the contact details listed on our Contact page or in the website footer."
+        ]
+      }
+    ]
+  },
+  privacy: {
+    label: "LEGAL",
+    title: "Privacy Policy",
+    updated: "August 2026",
+    intro:
+      "This Privacy Policy explains how Nutri Solutions Private Limited collects, uses, stores, and protects personal information when you visit our website, contact us, or apply for a role.",
+    sections: [
+      {
+        title: "1. Who we are",
+        paragraphs: [
+          "Nutri Solutions Private Limited (“Nutri Solutions”, “we”, “us”, or “our”) is a software development company based in Hyderabad, India. This policy applies to nutrisolutions.com and related contact or careers forms operated by us."
+        ]
+      },
+      {
+        title: "2. Information we collect",
+        paragraphs: [
+          "Information you provide: name, email, phone, company, project details, resume links, cover letters, and other information submitted through contact or career forms.",
+          "Technical data: IP address, browser type, device information, pages visited, referral source, and approximate location, collected via server logs and analytics tools we use to understand site usage.",
+          "We do not knowingly collect personal data from children under 18. If you believe a minor has submitted data, contact us and we will delete it where appropriate."
+        ]
+      },
+      {
+        title: "3. How we use information",
+        paragraphs: [
+          "We use personal information to respond to inquiries, schedule demos, prepare proposals, process job applications, improve our website, measure traffic, and comply with legal obligations.",
+          "We do not sell your personal information. We may share data with trusted service providers (hosting, email, analytics, cloud storage) solely to operate our business, under appropriate confidentiality and security expectations."
+        ]
+      },
+      {
+        title: "4. Cookies and analytics",
+        paragraphs: [
+          "We may use cookies or similar technologies and analytics services to understand how visitors use the site. You can control cookies through your browser settings. Disabling cookies may affect some site features."
+        ]
+      },
+      {
+        title: "5. Data retention",
+        paragraphs: [
+          "Inquiry and application data is retained as long as needed to respond, evaluate applications, manage follow-ups, or meet legal and accounting requirements. Analytics data is retained according to the settings of our analytics providers."
+        ]
+      },
+      {
+        title: "6. Security",
+        paragraphs: [
+          "We take reasonable technical and organizational measures to protect personal information against unauthorized access, loss, or misuse. No method of transmission over the internet is completely secure; please share only information you are comfortable providing."
+        ]
+      },
+      {
+        title: "7. Your choices",
+        paragraphs: [
+          "You may request access to, correction of, or deletion of personal information you have provided, subject to legal retention requirements. To make a request, contact us using the email or phone listed on our Contact page.",
+          "You may also unsubscribe from optional marketing communications if we send them; transactional replies to your inquiries are separate."
+        ]
+      },
+      {
+        title: "8. International visitors",
+        paragraphs: [
+          "Our primary operations are in India. If you access the site from another country, your information may be processed in India and other locations where our service providers operate."
+        ]
+      },
+      {
+        title: "9. Changes to this policy",
+        paragraphs: [
+          "We may update this Privacy Policy periodically. The “Last updated” date on this page shows when changes were last published. Material changes may also be highlighted on the website where appropriate."
+        ]
+      },
+      {
+        title: "10. Contact",
+        paragraphs: [
+          "For privacy-related questions or requests, reach us through the contact details in the website footer or on the Contact page."
+        ]
+      }
+    ]
+  }
+};

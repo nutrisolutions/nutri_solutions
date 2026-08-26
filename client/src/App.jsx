@@ -22,6 +22,7 @@ import AdminAnalyticsPage from "./pages/admin/AdminAnalyticsPage";
 import AdminCareersPage from "./pages/admin/AdminCareersPage";
 import AdminContactPage from "./pages/admin/AdminContactPage";
 import AdminSettingsPage from "./pages/admin/AdminSettingsPage";
+import LegalPage from "./pages/LegalPage";
 import useSmoothScroll from "./hooks/useSmoothScroll";
 
 const App = () => {
@@ -63,6 +64,8 @@ const App = () => {
         <Route path="/careers" element={<CareersPage />} />
         <Route path="/careers/:slug" element={<CareerDetailPage />} />
         <Route path="/contact" element={<ContactPage />} />
+        <Route path="/terms" element={<LegalPage pageKey="terms" />} />
+        <Route path="/privacy-policy" element={<LegalPage pageKey="privacy" />} />
       </Route>
     </Routes>
   );

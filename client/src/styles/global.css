@@ -4831,6 +4831,60 @@ html.admin-route.lenis body {
   border-top: 1px solid #1e293b;
   color: #64748b;
   font-size: 0.88rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem 1.5rem;
+}
+
+.legal-page-inner {
+  max-width: 46rem;
+}
+
+.legal-updated {
+  margin: 0 0 2rem;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.legal-section {
+  margin-bottom: 2rem;
+}
+
+.legal-section h2 {
+  margin: 0 0 0.75rem;
+  font-size: 1.15rem;
+}
+
+.legal-section p {
+  margin: 0 0 0.85rem;
+  color: var(--text-muted);
+  line-height: 1.7;
+}
+
+.legal-section p:last-child {
+  margin-bottom: 0;
+}
+
+.legal-page-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 2.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+}
+
+.legal-cross-link {
+  font-weight: 600;
+  color: var(--primary);
+}
+
+.legal-cross-link:hover {
+  text-decoration: underline;
 }
 
 /* Responsive */

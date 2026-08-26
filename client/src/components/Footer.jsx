@@ -82,6 +82,10 @@ const Footer = () => {
 
       <div className="container footer-bottom protoz-footer-bottom">
         <p>© {new Date().getFullYear()} Nutri Solutions Private Limited. All rights reserved.</p>
+        <nav className="protoz-footer-legal" aria-label="Legal">
+          <Link to="/privacy-policy">Privacy Policy</Link>
+          <Link to="/terms">Terms &amp; Conditions</Link>
+        </nav>
       </div>
     </footer>
   );
