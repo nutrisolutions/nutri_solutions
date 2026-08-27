@@ -27,10 +27,23 @@ if (process.env.NODE_ENV !== "production") {
   app.use(morgan("dev"));
 }
 
+const allowedOrigins = [
+  "https://nutrisolutions.co.in",
+  "https://www.nutrisolutions.co.in",
+];
+
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || "http://localhost:5173"
-  })
+    origin: function (origin, callback) {
+      // Allow requests without an Origin header
+      // (e.g. server-to-server requests, curl, etc.)
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+  }),
 );
 app.use(express.json({ limit: "2mb" }));
 app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
@@ -59,7 +72,7 @@ connectDb()
     server.on("error", (err) => {
       if (err.code === "EADDRINUSE") {
         console.error(
-          `Port ${PORT} is already in use. Change PORT in website/server/.env (macOS often uses 5000 for AirPlay).`
+          `Port ${PORT} is already in use. Change PORT in website/server/.env (macOS often uses 5000 for AirPlay).`,
         );
         process.exit(1);
       }
