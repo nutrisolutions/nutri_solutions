@@ -3737,6 +3737,17 @@ h3,
   box-shadow: var(--shadow);
 }
 
+.contact-map-frame {
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+
+.contact-map-frame iframe {
+  display: block;
+}
+
 .contact-channel-icon {
   display: inline-flex;
   align-items: center;

@@ -4,6 +4,7 @@ import FAQSection from "../components/FAQSection";
 import ContactIntro from "../components/contact/ContactIntro";
 import ContactChannels from "../components/contact/ContactChannels";
 import ContactInquiryForm from "../components/contact/ContactInquiryForm";
+import ContactMap from "../components/contact/ContactMap";
 import ContactNextSteps from "../components/contact/ContactNextSteps";
 import { contactPageContent, pageHero } from "../data/content";
 
@@ -22,6 +23,8 @@ const ContactPage = () => {
           <ContactInquiryForm />
         </div>
       </section>
+
+      <ContactMap />
 
       <ContactNextSteps />
 
