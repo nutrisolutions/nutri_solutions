@@ -5,11 +5,13 @@ import SeoHead from "../SeoHead";
 import PageTransition from "./PageTransition";
 import AnalyticsTracker from "../analytics/AnalyticsTracker";
 import useScrollToTop from "../../hooks/useScrollToTop";
+import useScrollReveal from "../../hooks/useScrollReveal";
 import { SiteSettingsProvider } from "../../context/SiteSettingsContext";
 
 const AppLayout = () => {
   const { pathname } = useLocation();
   useScrollToTop();
+  useScrollReveal();
 
   const seoKey =
     pathname === "/"

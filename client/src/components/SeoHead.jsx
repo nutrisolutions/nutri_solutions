@@ -17,6 +17,8 @@ const serviceSchema = {
   areaServed: "India"
 };
 
+const geo = { "@type": "GeoCoordinates", latitude: "17.434691", longitude: "78.376771" };
+
 const SeoHead = ({ page = "home" }) => {
   const { pathname } = useLocation();
   const contact = useSiteSettings();
@@ -42,7 +44,8 @@ const SeoHead = ({ page = "home" }) => {
     setMeta("og:description", meta.description, "property");
     setMeta("og:type", "website", "property");
     setMeta("og:url", `${seo.siteUrl}${pathname === "/" ? "" : pathname}`, "property");
-    setMeta("twitter:card", "summary_large_image");
+    setMeta("twitter:card", "summary");
+    setMeta("og:image", `${seo.siteUrl}/og-image.png`, "property");
     setMeta("twitter:title", meta.title);
     setMeta("twitter:description", meta.description);
 
@@ -59,9 +62,18 @@ const SeoHead = ({ page = "home" }) => {
       "@type": "Organization",
       name: "Nutri Solutions Private Limited",
       url: seo.siteUrl,
+      logo: `${seo.siteUrl}/favicon-512.png`,
       description: seo.description,
       email: contact.email,
       telephone: contact.phoneTel,
+      contactPoint: {
+        "@type": "ContactPoint",
+        telephone: contact.phoneTel,
+        email: contact.email,
+        contactType: "customer service",
+        areaServed: "IN",
+        availableLanguage: "en"
+      },
       address: {
         "@type": "PostalAddress",
         streetAddress: contact.streetAddress || contact.address,
@@ -70,6 +82,7 @@ const SeoHead = ({ page = "home" }) => {
         postalCode: contact.postalCode,
         addressCountry: contact.addressCountry || "IN"
       },
+      geo,
       areaServed: contact.addressCountry || "IN",
       sameAs: (contact.socialLinks || []).map((link) => link.url).filter(Boolean)
     };

@@ -17,8 +17,27 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Syne:wght@500;600;700;800&display=swap"
       rel="stylesheet"
     />
+    <!-- Google Search shows a favicon only if it is a square multiple of 48px -->
+    <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <title>Nutri Solutions Private Limited</title>
+
+    <!-- Static social preview tags: link-preview bots (WhatsApp, Facebook, LinkedIn) don't run JS -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Nutri Solutions" />
+    <meta property="og:title" content="Nutri Solutions | Software Development Company in Hyderabad" />
+    <meta property="og:description" content="Custom Software, Web & Mobile App Development, Cloud DevOps and IT Consulting in Hyderabad." />
+    <meta property="og:url" content="https://www.nutrisolutions.co.in/" />
+    <meta property="og:image" content="https://www.nutrisolutions.co.in/og-image.png" />
+    <meta property="og:image:secure_url" content="https://www.nutrisolutions.co.in/og-image.png" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="600" />
+    <meta property="og:image:height" content="600" />
+    <meta property="og:image:alt" content="Nutri Solutions logo" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:image" content="https://www.nutrisolutions.co.in/og-image.png" />
 
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-WYGSG5SQE0"></script>
@@ -28,6 +47,45 @@
       gtag('js', new Date());
 
       gtag('config', 'G-WYGSG5SQE0');
+    </script>
+
+    <!-- Static Organization schema for non-JS crawlers; SeoHead replaces it (same id) at runtime -->
+    <script type="application/ld+json" id="nutri-json-ld">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "Nutri Solutions Private Limited",
+      "url": "https://www.nutrisolutions.co.in/",
+      "logo": "https://www.nutrisolutions.co.in/favicon-512.png",
+      "email": "info@nutrisolutions.co.in",
+      "telephone": "+919100119741",
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "telephone": "+919100119741",
+        "email": "info@nutrisolutions.co.in",
+        "contactType": "customer service",
+        "areaServed": "IN",
+        "availableLanguage": "en"
+      },
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Orbit, Plot No 30/C, Sy No 83/1, Raidurgam, Knowledge City Rd",
+        "addressLocality": "Hyderabad",
+        "addressRegion": "Telangana",
+        "postalCode": "500032",
+        "addressCountry": "IN"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": "17.434691",
+        "longitude": "78.376771"
+      },
+      "sameAs": [
+        "https://www.instagram.com/nutrisolutionspvtltd/",
+        "https://www.facebook.com/profile.php?id=61591288857715",
+        "https://www.linkedin.com/company/nutri-solutions-pvt-ltd"
+      ]
+    }
     </script>
   </head>
   <body>

@@ -6,7 +6,7 @@ export const seo = {
     "Nutri Solutions Private Limited is a trusted software development company offering web development, mobile app development, custom ERP, cloud DevOps, and IT consulting for startups and enterprises.",
   keywords:
     "software development company, custom software development, web development services, mobile app development, IT solutions, enterprise software, cloud DevOps, software company India, Nutri Solutions",
-  siteUrl: "https://nutrisolutions.com"
+  siteUrl: "https://www.nutrisolutions.co.in"
 };
 
 /** Unsplash URL — each photo id is used once site-wide for static marketing imagery */
