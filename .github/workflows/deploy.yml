@@ -28,4 +28,4 @@ jobs:
           script: |
             echo "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com" | sudo tee /root/.git-credentials > /dev/null
             sudo git config --global credential.helper store
-            sudo GITHUB_TOKEN="${{ secrets.GITHUB_TOKEN }}" NODE_OPTIONS="--max-old-space-size=2048" /root/nutri_solutions/scripts/deploy.sh
+            sudo GITHUB_TOKEN="${{ secrets.GITHUB_TOKEN }}" NODE_OPTIONS="--max-old-space-size=2048" bash -c "cd /root/nutri_solutions && git fetch origin main && git reset --hard origin/main && bash scripts/deploy.sh"
