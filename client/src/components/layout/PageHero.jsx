@@ -1,3 +1,4 @@
+import { responsiveImage } from "../../lib/responsiveImage";
 import { motion } from "framer-motion";
 
 const PageHero = ({ label, title, subtitle, image }) => {
@@ -6,7 +7,7 @@ const PageHero = ({ label, title, subtitle, image }) => {
       <div className="page-hero-bg" aria-hidden="true" />
       {image && (
         <div className="page-hero-image" aria-hidden="true">
-          <img src={image} alt="" loading="eager" />
+          <img {...responsiveImage(image, "full")} alt="" loading="eager" fetchpriority="high" />
           <div className="page-hero-image-overlay" />
         </div>
       )}

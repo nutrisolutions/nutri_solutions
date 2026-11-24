@@ -1,3 +1,4 @@
+import { responsiveImage } from "../lib/responsiveImage";
 import { motion } from "framer-motion";
 import {
   ArrowUpRight,
@@ -48,12 +49,13 @@ const ServiceBentoCard = ({ service, index, layout }) => {
       <Link to={`/services/${slug}`} className="services-bento-card-link">
         <div className="services-bento-card-media">
           <img
-            src={imageSrc}
+            {...responsiveImage(imageSrc, "card")}
             alt=""
             aria-hidden="true"
             loading="lazy"
             onError={(event) => {
               event.currentTarget.onerror = null;
+              event.currentTarget.removeAttribute("srcset");
               event.currentTarget.src = getFallbackImage(slug);
             }}
           />

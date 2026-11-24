@@ -1,3 +1,4 @@
+import { responsiveImage } from "../../lib/responsiveImage";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -11,7 +12,7 @@ const HomeBlogPreview = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchBlogs()
+    fetchBlogs({ limit: 3 })
       .then((data) => setBlogs(data.slice(0, 3)))
       .catch(() => setBlogs([]))
       .finally(() => setLoading(false));
@@ -44,7 +45,7 @@ const HomeBlogPreview = () => {
                 <Link to={`/blog/${blog.slug}`} className="home-blog-card-link">
                   {blog.coverImage && (
                     <div className="home-blog-card-image">
-                      <img src={blog.coverImage} alt="" loading="lazy" />
+                      <img {...responsiveImage(blog.coverImage, "card")} alt="" loading="lazy" />
                     </div>
                   )}
                   <div className="home-blog-card-body">

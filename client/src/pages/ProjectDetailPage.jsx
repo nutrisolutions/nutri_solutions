@@ -6,6 +6,7 @@ import { fetchProject, isNotFoundError } from "../lib/api";
 import ProjectScreenshotCarousel from "../components/project/ProjectScreenshotCarousel";
 import usePageSeo from "../hooks/usePageSeo";
 import { breadcrumbSchema, canonicalUrl, fitTitle, ORG_ID, toDescription } from "../lib/seo";
+import { responsiveImage } from "../lib/responsiveImage";
 
 const projectSeo = (project, slug) => {
   const path = `/projects/${slug}`;
@@ -108,7 +109,7 @@ const ProjectDetailPage = () => {
   return (
     <div className="project-detail-page">
       <section id="project-banner" className="project-detail-banner">
-        <img src={banner} alt="" aria-hidden="true" />
+        <img {...responsiveImage(banner, "full")} alt="" aria-hidden="true" />
         <div className="project-detail-banner-overlay" />
         <div className="container project-detail-banner-top">
           <Link to="/projects" className="project-back-link">

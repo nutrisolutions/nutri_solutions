@@ -1,3 +1,4 @@
+import { responsiveImage } from "../lib/responsiveImage";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { ArrowRight, Check, Code2, PenTool, Rocket, Search } from "lucide-react";
@@ -48,7 +49,7 @@ const ProcessSection = ({ hideHeader = false }) => {
             </div>
 
             <div className="process-aside-visual" aria-hidden="true">
-              <img src={aside.image} alt="" loading="lazy" />
+              <img {...responsiveImage(aside.image, "half")} alt="" loading="lazy" />
               <div className="process-aside-visual-overlay" />
               <span className="process-aside-visual-caption">Sprint planning & delivery</span>
             </div>

@@ -22,7 +22,7 @@ export const fetchProjects = (params) => api.get("/api/projects", { params }).th
 
 export const fetchProject = (slug) => api.get(`/api/projects/${slug}`).then((r) => r.data.project);
 
-export const fetchBlogs = () => api.get("/api/blogs").then((r) => r.data.blogs);
+export const fetchBlogs = (params) => api.get("/api/blogs", { params }).then((r) => r.data.blogs);
 
 export const fetchBlog = (slug) => api.get(`/api/blogs/${slug}`).then((r) => r.data.blog);
 

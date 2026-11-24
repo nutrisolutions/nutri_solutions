@@ -1,3 +1,4 @@
+import { responsiveImage } from "../lib/responsiveImage";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -40,7 +41,7 @@ const BlogListPage = () => {
                   <Link to={`/blog/${blog.slug}`} className="blog-card-link">
                     {blog.coverImage && (
                       <div className="blog-card-image">
-                        <img src={blog.coverImage} alt="" loading="lazy" />
+                        <img {...responsiveImage(blog.coverImage, "card")} alt="" loading="lazy" />
                       </div>
                     )}
                     <div className="blog-card-body">

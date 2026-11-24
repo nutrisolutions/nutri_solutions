@@ -17,7 +17,8 @@ const AnimatedStatValue = ({
   const ref = useRef(null);
   const inView = useInView(ref, { once, margin: startOnMount ? "0px" : margin });
   const { target, suffix, decimals } = parseStatValue(value);
-  const [display, setDisplay] = useState(() => formatStatValue(0, decimals, suffix));
+  // Start at the real value so prerendered HTML, crawlers and reduced-motion users never see "0+".
+  const [display, setDisplay] = useState(() => formatStatValue(target, decimals, suffix));
   const hasAnimated = useRef(false);
 
   useEffect(() => {
@@ -25,6 +26,12 @@ const AnimatedStatValue = ({
     if (!shouldRun || hasAnimated.current) return;
 
     hasAnimated.current = true;
+    const skipMotion =
+      window.matchMedia?.("(prefers-reduced-motion: reduce)").matches || navigator.webdriver === true;
+    if (skipMotion) {
+      setDisplay(formatStatValue(target, decimals, suffix));
+      return;
+    }
     const controls = animate(0, target, {
       duration,
       ease: [0.22, 1, 0.36, 1],

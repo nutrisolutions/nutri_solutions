@@ -24,7 +24,7 @@
 
 ## 6. Current Work
 - SEO audit (2026-11-24, score 40/100): `nutrisolutions.co.in-audit/` (untracked) — FULL-AUDIT-REPORT.md, ACTION-PLAN.md.
-- Phase 1+2 (A–O) implemented in code. **Pending outside the repo:** apply `deploy/nginx/` on EC2 (check cert paths, remove old site server blocks, keep the api block); re-auth Search Console MCP; submit sitemap in GSC + Bing.
+- Phase 1+2 (A–O) live as of 2026-11-24: nginx config applied on EC2 (`/etc/nginx/sites-available/nutrisolutions`, backup of the old certbot config at `/root/nutrisolutions.nginx.bak`; api block untouched). Mobile Lighthouse 29 → 43 (LCP 13.5s → 7.2s, TBT 1.03s). **Pending:** submit sitemap in GSC + Bing; re-auth Search Console MCP; further LCP/TBT work (hero image, gtag, framer-motion).
 - Phase 3 (content/authority: blog rewrites, named authors, case-study results, GBP, directories, llms.txt) not started — needs content from the team.
 
 ## 7. Known Issues

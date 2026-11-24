@@ -1,3 +1,4 @@
+import { responsiveImage } from "../../lib/responsiveImage";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -27,7 +28,7 @@ const HomeExplore = () => {
             >
               <Link to={item.to} className="home-explore-card-link">
                 <div className="home-explore-card-visual">
-                  <img src={item.image} alt="" loading="lazy" />
+                  <img {...responsiveImage(item.image, "card")} alt="" loading="lazy" />
                   <div className="home-explore-card-overlay" />
                 </div>
                 <div className="home-explore-card-body">

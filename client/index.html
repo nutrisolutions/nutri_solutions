@@ -35,14 +35,31 @@
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:image" content="https://www.nutrisolutions.co.in/og-image.png" />
 
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-WYGSG5SQE0"></script>
+    <!-- Google tag (gtag.js): queue events immediately, download the library after load + idle
+         (or on first interaction) so it doesn't compete with page content. -->
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-
       gtag('config', 'G-WYGSG5SQE0');
+      (function () {
+        var loaded = false;
+        function loadGtag() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = 'https://www.googletagmanager.com/gtag/js?id=G-WYGSG5SQE0';
+          document.head.appendChild(s);
+        }
+        ['pointerdown', 'keydown', 'scroll'].forEach(function (e) {
+          window.addEventListener(e, loadGtag, { once: true, passive: true });
+        });
+        window.addEventListener('load', function () {
+          if ('requestIdleCallback' in window) requestIdleCallback(loadGtag, { timeout: 5000 });
+          else setTimeout(loadGtag, 3000);
+        });
+      })();
     </script>
 
     <!-- Fallback business schema for the un-prerendered shell (admin, 404); SeoHead replaces it (same id) at runtime -->

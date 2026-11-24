@@ -1,3 +1,4 @@
+import { responsiveImage } from "../lib/responsiveImage";
 import { useRef, useState } from "react";
 import {
   motion,
@@ -100,7 +101,7 @@ const ServiceScrollCard = ({ service, index, isActive, onActive, total }) => {
 
       <div className="service-card-visual">
         <motion.div className="service-card-image-wrap" style={{ y: imageY }}>
-          <img src={service.image} alt={service.title} loading="lazy" />
+          <img {...responsiveImage(service.image, "card")} alt={service.title} loading="lazy" />
           <div
             className="service-card-image-overlay"
             style={{ background: `linear-gradient(135deg, ${service.accent}55, transparent)` }}
@@ -236,7 +237,7 @@ const FeaturesSection = ({ services = [], hideHeader = false }) => {
                   <h3>{item.title}</h3>
                 </div>
                 <p>{item.description}</p>
-                <img src={item.image} alt={item.title} loading="lazy" />
+                <img {...responsiveImage(item.image, "card")} alt={item.title} loading="lazy" />
                 <Link
                   to={`/services/${getServiceSlug(item)}`}
                   className="service-card-link"

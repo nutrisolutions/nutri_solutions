@@ -2,6 +2,7 @@
 // read process.env at import time, so dotenv has to populate it first.
 import "dotenv/config";
 
+import compression from "compression";
 import cors from "cors";
 import express from "express";
 import morgan from "morgan";
@@ -22,6 +23,9 @@ import { seedDatabase } from "./utils/seed.js";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
 const PORT = process.env.PORT || 5001;
+
+// gzip JSON responses (nginx in front of the API doesn't compress application/json).
+app.use(compression());
 
 if (process.env.NODE_ENV !== "production") {
   app.use(morgan("dev"));

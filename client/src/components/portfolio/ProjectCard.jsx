@@ -1,3 +1,4 @@
+import { responsiveImage } from "../../lib/responsiveImage";
 import { motion } from "framer-motion";
 import { ArrowUpRight, Globe, Landmark, Palette, Smartphone, CloudCog } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -24,7 +25,7 @@ const ProjectCard = ({ project, index = 0 }) => {
     >
       <Link to={`/projects/${project.slug}`} className="project-card-link">
         <div className="project-card-media">
-          <img src={project.image} alt={project.title} loading="lazy" />
+          <img {...responsiveImage(project.image, "card")} alt={project.title} loading="lazy" />
           <div className="project-card-media-overlay" />
           <span className="project-type-badge">
             <Icon size={14} />

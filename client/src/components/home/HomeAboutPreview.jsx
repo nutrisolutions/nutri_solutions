@@ -1,3 +1,4 @@
+import { responsiveImage } from "../../lib/responsiveImage";
 import { motion } from "framer-motion";
 import { Code2, Shield, Target, Users } from "lucide-react";
 import SectionHeader from "../ui/SectionHeader";
@@ -43,7 +44,7 @@ const HomeAboutPreview = () => {
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
           >
-            <img src={images.main} alt="Nutri Solutions team" loading="lazy" />
+            <img {...responsiveImage(images.main, "half")} alt="Nutri Solutions team" loading="lazy" />
           </motion.div>
         </div>
 

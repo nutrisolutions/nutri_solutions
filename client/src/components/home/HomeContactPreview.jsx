@@ -1,3 +1,4 @@
+import { responsiveImage } from "../../lib/responsiveImage";
 import { motion } from "framer-motion";
 import { Mail, MapPin, Phone } from "lucide-react";
 import SectionHeader from "../ui/SectionHeader";
@@ -41,7 +42,7 @@ const HomeContactPreview = () => {
           viewport={{ once: true }}
         >
           <img
-            src={contact.previewImage}
+            {...responsiveImage(contact.previewImage, "half")}
             alt="Free Demo session at Nutri Solutions"
             loading="lazy"
           />

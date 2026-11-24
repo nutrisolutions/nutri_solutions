@@ -1,9 +1,15 @@
 import Blog from "../models/Blog.js";
 import { slugify } from "../utils/slugify.js";
 
-export const listPublishedBlogs = async (_req, res) => {
+// List view never needs the full article body (cards show the excerpt) — keeps the payload small.
+export const listPublishedBlogs = async (req, res) => {
   try {
-    const blogs = await Blog.find({ published: true }).sort({ publishedAt: -1, createdAt: -1 });
+    const limit = Math.min(Math.max(parseInt(req.query.limit, 10) || 0, 0), 100);
+    let query = Blog.find({ published: true })
+      .select("-content")
+      .sort({ publishedAt: -1, createdAt: -1 });
+    if (limit) query = query.limit(limit);
+    const blogs = await query;
     return res.json({ blogs });
   } catch (error) {
     return res.status(500).json({ message: error.message });

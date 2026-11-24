@@ -5,6 +5,7 @@ import { ArrowLeft } from "lucide-react";
 import { fetchBlog, isNotFoundError } from "../lib/api";
 import usePageSeo from "../hooks/usePageSeo";
 import { breadcrumbSchema, canonicalUrl, fitTitle, ORG_ID, toDescription } from "../lib/seo";
+import { responsiveImage } from "../lib/responsiveImage";
 
 const blogSeo = (blog, slug) => {
   const path = `/blog/${slug}`;
@@ -88,7 +89,7 @@ const BlogDetailPage = () => {
     <article className="blog-detail-page">
       {blog.coverImage && (
         <div className="blog-detail-cover">
-          <img src={blog.coverImage} alt={`Cover image for ${blog.title}`} />
+          <img {...responsiveImage(blog.coverImage, "full")} alt={`Cover image for ${blog.title}`} />
           <div className="blog-detail-cover-overlay" />
         </div>
       )}

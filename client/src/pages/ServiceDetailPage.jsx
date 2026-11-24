@@ -19,6 +19,7 @@ import usePageSeo from "../hooks/usePageSeo";
 import { breadcrumbSchema, canonicalUrl, ORG_ID, toDescription } from "../lib/seo";
 import useHomeContent from "../hooks/useHomeContent";
 import { findServiceBySlug, getServiceSlug, resolveServices } from "../lib/services";
+import { responsiveImage } from "../lib/responsiveImage";
 
 const iconMap = { Globe, Smartphone, Landmark, CloudCog, Palette, ShieldCheck, Lock, Brain };
 
@@ -94,7 +95,7 @@ const ServiceDetailPage = () => {
   return (
     <div className="service-detail-page">
       <section className="service-detail-banner">
-        <img src={banner} alt="" aria-hidden="true" />
+        <img {...responsiveImage(banner, "full")} alt="" aria-hidden="true" />
         <div className="service-detail-banner-overlay" />
         <div className="container service-detail-banner-top">
           <Link to="/services" className="project-back-link">

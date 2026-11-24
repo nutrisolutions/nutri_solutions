@@ -1,3 +1,4 @@
+import { responsiveImage } from "../lib/responsiveImage";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { ArrowRight, Check, Code2, Shield, Target, Users } from "lucide-react";
@@ -35,7 +36,7 @@ const AboutSection = ({ hideHeader = false }) => {
             transition={{ duration: 0.6 }}
           >
             <div className="about-visual-main">
-              <img src={images.main} alt="Software team collaborating in modern office" loading="lazy" />
+              <img {...responsiveImage(images.main, "half")} alt="Software team collaborating in modern office" loading="lazy" />
               <div className="about-visual-gradient" />
             </div>
 
@@ -46,7 +47,7 @@ const AboutSection = ({ hideHeader = false }) => {
               viewport={{ once: true }}
               transition={{ delay: 0.2 }}
             >
-              <img src={images.team} alt="Development team meeting" loading="lazy" />
+              <img {...responsiveImage(images.team, "card")} alt="Development team meeting" loading="lazy" />
             </motion.div>
 
             <motion.div
@@ -56,7 +57,7 @@ const AboutSection = ({ hideHeader = false }) => {
               viewport={{ once: true }}
               transition={{ delay: 0.3 }}
             >
-              <img src={images.workspace} alt="Software development workspace" loading="lazy" />
+              <img {...responsiveImage(images.workspace, "card")} alt="Software development workspace" loading="lazy" />
             </motion.div>
 
             <motion.div
