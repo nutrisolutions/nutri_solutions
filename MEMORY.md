@@ -21,10 +21,13 @@
 - `noindex` only when the API returns 404 (`isNotFoundError`), never on network errors — protects indexed pages from transient API failures. Date: 2026-11-24
 - Homepage H1 = small line "Custom software development company in Hyderabad"; the big "From concept to code to customers" is a styled `<p class="protoz-hero-title">`. Date: 2026-11-24
 - Sitemap is generated, not hand-written (`client/public/sitemap.xml` removed). Date: 2026-11-24
+- Stat counters (`AnimatedStatValue`) start at the real value; count-up only when motion allowed — snapshots/crawlers must never see "0+". Date: 2026-11-24
+- Public blog list (`GET /api/blogs`) omits `content`; only `GET /api/blogs/:slug` returns the body. Date: 2026-11-24
 
 ## 6. Current Work
 - SEO audit (2026-11-24, score 40/100): `nutrisolutions.co.in-audit/` (untracked) — FULL-AUDIT-REPORT.md, ACTION-PLAN.md.
-- Phase 1+2 (A–O) live as of 2026-11-24: nginx config applied on EC2 (`/etc/nginx/sites-available/nutrisolutions`, backup of the old certbot config at `/root/nutrisolutions.nginx.bak`; api block untouched). Mobile Lighthouse 29 → 43 (LCP 13.5s → 7.2s, TBT 1.03s). **Pending:** submit sitemap in GSC + Bing; re-auth Search Console MCP; further LCP/TBT work (hero image, gtag, framer-motion).
+- Phase 1+2 (A–O) live as of 2026-11-24: nginx config applied on EC2 (`/etc/nginx/sites-available/nutrisolutions`, backup of the old certbot config at `/root/nutrisolutions.nginx.bak`; api block untouched). Perf round 2 (2026-11-24): responsive Unsplash srcset (`lib/responsiveImage.js`), deferred gtag, API gzip (`compression`), blog list without `content` + `?limit=`, stat counters render real values, Lenis off on touch/reduced-motion. Lighthouse: home mobile 29 → ~44–50 (LCP ~6.7–7.2s), desktop 89, blog mobile 75; SEO 100 everywhere. Audit v2 score 71/100 (`nutrisolutions.co.in-audit/FULL-AUDIT-REPORT-v2.md`). **Pending:** submit sitemap in GSC + Bing; re-auth Search Console MCP.
+- Remaining mobile cost is main-thread: framer-motion (~2.3s CPU) + React re-rendering the whole prerendered DOM (`createRoot`, not `hydrateRoot`) + render-blocking Google Fonts. Next options: `hydrateRoot`, LazyMotion/`m` components or CSS animations above the fold, self-hosted fonts.
 - Phase 3 (content/authority: blog rewrites, named authors, case-study results, GBP, directories, llms.txt) not started — needs content from the team.
 
 ## 7. Known Issues
@@ -37,6 +40,7 @@
 - API CORS only allows the production origins — local prerender proxies API calls through Node.
 
 ## 11. Do Not Repeat
+- Disabling Lenis alone did not improve mobile Lighthouse (framer-motion is the cost); kept for native touch scroll UX, not speed.
 - Don't add `gzip on;` at http level in `deploy/nginx/` — Ubuntu's nginx.conf already has it (duplicate → `nginx -t` fails).
 - nginx config uses `http2 on;` (needs nginx ≥1.25.1 — prod is 1.28, CI runner is newer). CI dummy dhparams must be ≥2048-bit (OpenSSL 3 rejects 1024).
 
