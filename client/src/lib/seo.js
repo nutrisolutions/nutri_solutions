@@ -7,6 +7,9 @@ export const ORG_ID = `${seo.siteUrl}/#organization`;
 const PAGE_SCHEMA_ID = "nutri-json-ld-page";
 
 /** Absolute, canonical URL for a path: www host, no trailing slash (except root), no query/hash. */
+/** Site-relative asset path → absolute URL (OG tags and JSON-LD require absolute URLs). */
+export const absoluteUrl = (src) => (typeof src === "string" && src.startsWith("/") && !src.startsWith("//") ? `${seo.siteUrl}${src}` : src);
+
 export const canonicalUrl = (pathname = "/") => {
   const clean = pathname.split(/[?#]/)[0].replace(/\/+$/, "");
   return `${seo.siteUrl}${clean || "/"}`;
@@ -73,6 +76,7 @@ export const applySeo = ({
   schema = []
 }) => {
   const url = canonicalUrl(pathname);
+  image = absoluteUrl(image);
 
   document.title = title;
   upsertMeta("description", description);

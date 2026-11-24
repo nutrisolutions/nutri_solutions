@@ -4,7 +4,8 @@ import { motion } from "framer-motion";
 import { ArrowLeft } from "lucide-react";
 import { fetchBlog, isNotFoundError } from "../lib/api";
 import usePageSeo from "../hooks/usePageSeo";
-import { breadcrumbSchema, canonicalUrl, fitTitle, ORG_ID, toDescription } from "../lib/seo";
+import BlogContent from "../components/blog/BlogContent";
+import { absoluteUrl, breadcrumbSchema, canonicalUrl, fitTitle, ORG_ID, toDescription } from "../lib/seo";
 import { responsiveImage } from "../lib/responsiveImage";
 
 const blogSeo = (blog, slug) => {
@@ -23,7 +24,7 @@ const blogSeo = (blog, slug) => {
         "@type": "BlogPosting",
         headline: blog.title,
         description,
-        image: blog.coverImage ? [blog.coverImage] : undefined,
+        image: blog.coverImage ? [absoluteUrl(blog.coverImage)] : undefined,
         datePublished: blog.publishedAt || blog.createdAt,
         dateModified: blog.updatedAt || blog.publishedAt || blog.createdAt,
         author: isTeam
@@ -102,11 +103,7 @@ const BlogDetailPage = () => {
           <h1>{blog.title}</h1>
           <p className="blog-detail-meta">By {blog.author}</p>
         </motion.div>
-        <div className="blog-detail-content">
-          {blog.content.split("\n").map((para, i) => (
-            <p key={i}>{para}</p>
-          ))}
-        </div>
+        <BlogContent content={blog.content} />
       </div>
     </article>
   );

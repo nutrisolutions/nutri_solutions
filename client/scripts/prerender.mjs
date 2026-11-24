@@ -197,7 +197,16 @@ const main = async () => {
         const links = [...document.querySelectorAll("a[href]")]
           .map((a) => a.getAttribute("href"))
           .filter((h) => h && h.startsWith("/") && !h.startsWith("//"));
+        // Content images hosted on our own domain → image sitemap (Google Images).
+        const images = [
+          ...new Set(
+            [...document.querySelectorAll(".blog-detail-cover img, .blog-detail-content img")]
+              .map((img) => img.getAttribute("src"))
+              .filter((src) => src && src.startsWith("/") && !src.startsWith("//"))
+          )
+        ];
         return {
+          images,
           title: document.title,
           description: document.querySelector('meta[name="description"]')?.content || "",
           canonical: document.querySelector('link[rel="canonical"]')?.href || "",
@@ -281,14 +290,18 @@ const main = async () => {
   }
 
   // 4. Sitemap.
+  const imagesByRoute = new Map(results.map((r) => [r.route, r.images || []]));
   const routes = results.map((r) => r.route).sort((a, b) => (a === "/" ? -1 : b === "/" ? 1 : a.localeCompare(b)));
   const xml = [
     '<?xml version="1.0" encoding="UTF-8"?>',
-    '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+    '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">',
     ...routes.map((route) => {
       const loc = `${SITE}${route === "/" ? "/" : route}`;
       const mod = lastmod.get(route);
-      return `  <url><loc>${xmlEscape(loc)}</loc>${mod ? `<lastmod>${mod}</lastmod>` : ""}</url>`;
+      const imgs = (imagesByRoute.get(route) || [])
+        .map((src) => `<image:image><image:loc>${xmlEscape(SITE + src)}</image:loc></image:image>`)
+        .join("");
+      return `  <url><loc>${xmlEscape(loc)}</loc>${mod ? `<lastmod>${mod}</lastmod>` : ""}${imgs}</url>`;
     }),
     "</urlset>",
     ""
