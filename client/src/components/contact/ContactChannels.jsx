@@ -1,4 +1,14 @@
-import { Briefcase, Clock, Mail, MapPin, Phone } from "lucide-react";
+import {
+  Briefcase,
+  Clock,
+  Facebook,
+  Instagram,
+  Linkedin,
+  Mail,
+  MapPin,
+  Phone,
+  Share2
+} from "lucide-react";
 import { Link } from "react-router-dom";
 import { contactPageContent } from "../../data/content";
 import { useSiteSettings } from "../../context/SiteSettingsContext";
@@ -8,12 +18,18 @@ const channelIcons = {
   phone: Phone,
   map: MapPin,
   clock: Clock,
-  briefcase: Briefcase
+  briefcase: Briefcase,
+  share: Share2
 };
+
+const SOCIAL_ICONS = { instagram: Instagram, facebook: Facebook, linkedin: Linkedin };
 
 const ContactChannels = () => {
   const contact = useSiteSettings();
   const officeCity = contact.addressLocality || "Hyderabad";
+  const socialLinks = (contact.socialLinks || []).filter(
+    (social) => social.url && SOCIAL_ICONS[social.icon]
+  );
 
   const channels = [
     {
@@ -63,6 +79,36 @@ const ContactChannels = () => {
       description: "We aim to reply within one business day for new inquiries.",
       action: <span className="contact-channel-meta">Mon–Fri · IST</span>
     },
+    ...(socialLinks.length
+      ? [
+          {
+            id: "social",
+            icon: "share",
+            title: "Follow us",
+            description: "See our latest work, team updates, and openings.",
+            action: (
+              <ul className="contact-social-list">
+                {socialLinks.map((social) => {
+                  const Icon = SOCIAL_ICONS[social.icon];
+                  return (
+                    <li key={social.url}>
+                      <a
+                        href={social.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="contact-social-link"
+                      >
+                        <Icon size={16} aria-hidden="true" />
+                        <span>{social.label}</span>
+                      </a>
+                    </li>
+                  );
+                })}
+              </ul>
+            )
+          }
+        ]
+      : []),
     {
       id: "careers",
       icon: "briefcase",

@@ -15,9 +15,9 @@ export const DEFAULT_SITE_SETTINGS = {
   mapUrl: "https://maps.google.com/?q=Orbit+Plot+30+C+Knowledge+City+Rd+Raidurgam+Hyderabad+500032",
   previewImage: "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?auto=format&fit=crop&w=800&q=80",
   socialLinks: [
-    { label: "Instagram", url: "https://www.instagram.com/nutrisolutionspvtltd/", icon: "instagram" },
-    { label: "Facebook", url: "https://www.facebook.com/profile.php?id=61591288857715", icon: "facebook" },
-    { label: "LinkedIn", url: "https://www.linkedin.com/company/nutri-solutions-pvt-ltd", icon: "linkedin" }
+    { label: "Instagram", url: "https://www.instagram.com/nutrisolutions_official/", icon: "instagram" },
+    { label: "Facebook", url: "https://www.facebook.com/nutrisolutionsofficial/", icon: "facebook" },
+    { label: "LinkedIn", url: "https://www.linkedin.com/company/nutri-solutions-pvt-ltd/", icon: "linkedin" }
   ]
 };
 

@@ -472,9 +472,9 @@ export const contactInfo = {
 };
 
 export const socialLinks = [
-  { label: "Instagram", url: "https://www.instagram.com/nutrisolutionspvtltd/", icon: "instagram" },
-  { label: "Facebook", url: "https://www.facebook.com/profile.php?id=61591288857715", icon: "facebook" },
-  { label: "LinkedIn", url: "https://www.linkedin.com/company/nutri-solutions-pvt-ltd", icon: "linkedin" }
+  { label: "Instagram", url: "https://www.instagram.com/nutrisolutions_official/", icon: "instagram" },
+  { label: "Facebook", url: "https://www.facebook.com/nutrisolutionsofficial/", icon: "facebook" },
+  { label: "LinkedIn", url: "https://www.linkedin.com/company/nutri-solutions-pvt-ltd/", icon: "linkedin" }
 ];
 
 export const contactPageContent = {
