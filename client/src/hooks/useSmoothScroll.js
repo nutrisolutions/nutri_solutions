@@ -8,13 +8,16 @@ const useSmoothScroll = () => {
 
   useEffect(() => {
     if (isAdminRoute) return undefined;
+    // Native scrolling on touch devices and for reduced-motion users: Lenis runs a rAF loop every
+    // frame, which was the biggest main-thread cost on phones (and hijacked native touch scroll).
+    const coarsePointer = window.matchMedia("(pointer: coarse)").matches;
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (coarsePointer || reducedMotion) return undefined;
 
     const lenis = new Lenis({
       duration: 1.15,
       easing: (t) => 1 - Math.pow(1 - t, 4),
-      smoothWheel: true,
-      smoothTouch: true,
-      touchMultiplier: 1.1
+      smoothWheel: true
     });
 
     let frameId;
