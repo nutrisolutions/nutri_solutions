@@ -152,7 +152,7 @@ const AdminSettingsPage = () => {
                   value={form.phone}
                   onChange={(e) => setField("phone", e.target.value)}
                   required
-                  placeholder="+91 91001 19741"
+                  placeholder="+91 99493 55560"
                 />
                 <span className="admin-settings-hint">Display number on the site</span>
               </label>
@@ -161,7 +161,7 @@ const AdminSettingsPage = () => {
                 <input
                   value={form.phoneTel}
                   onChange={(e) => setField("phoneTel", e.target.value)}
-                  placeholder="+919100119741"
+                  placeholder="+919949355560"
                 />
                 <span className="admin-settings-hint">Digits only, used in the phone link</span>
               </label>

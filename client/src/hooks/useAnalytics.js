@@ -3,7 +3,10 @@ import { useLocation } from "react-router-dom";
 import { initPostHog } from "../lib/posthog";
 import { trackPageTransition, trackPageView, trackSectionView } from "../lib/analytics";
 
-const isPublicRoute = (pathname) => !pathname.startsWith("/admin");
+// Build-time prerendering runs in headless Chrome (navigator.webdriver) — never track it.
+const isPrerender = typeof navigator !== "undefined" && navigator.webdriver === true;
+
+const isPublicRoute = (pathname) => !isPrerender && !pathname.startsWith("/admin");
 
 /** PostHog + server mirror: page views, section views, page transitions. */
 const useAnalytics = () => {
@@ -12,7 +15,7 @@ const useAnalytics = () => {
   const seenSections = useRef(new Set());
 
   useEffect(() => {
-    initPostHog();
+    if (!isPrerender) initPostHog();
   }, []);
 
   useEffect(() => {

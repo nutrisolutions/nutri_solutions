@@ -4,28 +4,94 @@ on:
   push:
     branches:
       - main
+  # Manual "rebuild site" button (e.g. right after publishing a blog post in the admin panel).
+  workflow_dispatch:
+  # Nightly rebuild so new blog posts / projects get prerendered and added to the sitemap.
+  schedule:
+    - cron: "30 20 * * *" # 02:00 IST
 
 concurrency:
   group: production-deploy
   cancel-in-progress: false
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-
+    env:
+      VITE_API_URL: https://api.nutrisolutions.co.in
     steps:
-      - name: Deploy to EC2
-        uses: appleboy/ssh-action@v1.2.2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: client/package-lock.json
+
+      - name: Install frontend dependencies
+        working-directory: client
+        run: npm ci
+
+      - name: Build + prerender + sitemap
+        working-directory: client
+        run: npm run build:seo
+
+      - name: Validate nginx config syntax
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq nginx > /dev/null
+          sudo mkdir -p /etc/letsencrypt/live/nutrisolutions.co.in /etc/nginx/snippets
+          sudo openssl req -x509 -nodes -newkey rsa:2048 -days 1 -subj "/CN=test" \
+            -keyout /etc/letsencrypt/live/nutrisolutions.co.in/privkey.pem \
+            -out /etc/letsencrypt/live/nutrisolutions.co.in/fullchain.pem 2> /dev/null
+          echo "ssl_protocols TLSv1.2 TLSv1.3;" | sudo tee /etc/letsencrypt/options-ssl-nginx.conf > /dev/null
+          sudo openssl dhparam -dsaparam -out /etc/letsencrypt/ssl-dhparams.pem 1024 2> /dev/null
+          sudo cp deploy/nginx/security-headers.conf /etc/nginx/snippets/nutrisolutions-security-headers.conf
+          sudo cp deploy/nginx/nutrisolutions.conf /etc/nginx/sites-enabled/nutrisolutions.conf
+          sudo rm -f /etc/nginx/sites-enabled/default
+          sudo nginx -t
+
+      - name: Package site
+        run: tar -czf site.tar.gz -C client/dist .
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: site
+          path: site.tar.gz
+          retention-days: 7
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: site
+
+      - name: Upload site to EC2
+        uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ubuntu
           key: ${{ secrets.EC2_SSH_KEY }}
-          envs: GITHUB_TOKEN
+          source: site.tar.gz
+          target: /tmp/nutri-deploy
+
+      - name: Deploy on EC2
+        uses: appleboy/ssh-action@v1.2.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Nightly runs only refresh the static site; no backend restart.
+          FRONTEND_ONLY: ${{ github.event_name == 'schedule' && '1' || '0' }}
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          envs: GITHUB_TOKEN,FRONTEND_ONLY
           script: |
             echo "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com" | sudo tee /root/.git-credentials > /dev/null
             sudo git config --global credential.helper store
-            sudo GITHUB_TOKEN="${{ secrets.GITHUB_TOKEN }}" NODE_OPTIONS="--max-old-space-size=2048" bash -c "cd /root/nutri_solutions && git fetch origin main && git reset --hard origin/main && bash scripts/deploy.sh"
+            sudo GITHUB_TOKEN="${{ secrets.GITHUB_TOKEN }}" FRONTEND_ONLY="$FRONTEND_ONLY" PREBUILT_SITE=/tmp/nutri-deploy/site.tar.gz NODE_OPTIONS="--max-old-space-size=2048" bash -c "cd /root/nutri_solutions && git fetch origin main && git reset --hard origin/main && bash scripts/deploy.sh"

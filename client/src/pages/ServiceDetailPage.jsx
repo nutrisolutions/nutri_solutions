@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import { Link, useParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
@@ -14,7 +14,9 @@ import {
   ShieldCheck,
   Smartphone
 } from "lucide-react";
-import { defaultServices, pageSeo } from "../data/content";
+import { defaultServices } from "../data/content";
+import usePageSeo from "../hooks/usePageSeo";
+import { breadcrumbSchema, canonicalUrl, ORG_ID, toDescription } from "../lib/seo";
 import useHomeContent from "../hooks/useHomeContent";
 import { findServiceBySlug, getServiceSlug, resolveServices } from "../lib/services";
 
@@ -36,14 +38,38 @@ const ServiceDetailPage = () => {
     [services, slug]
   );
 
-  useEffect(() => {
-    if (service) {
-      document.title = `${service.title} | Nutri Solutions`;
-    }
-    return () => {
-      document.title = pageSeo.home.title;
-    };
-  }, [service]);
+  usePageSeo(
+    service
+      ? {
+          title: `${service.title} Services in Hyderabad | Nutri Solutions`,
+          description: toDescription(service.description || service.overview?.[0]),
+          schema: [
+            {
+              "@context": "https://schema.org",
+              "@type": "Service",
+              name: service.title,
+              serviceType: service.title,
+              description: toDescription(service.description || service.overview?.[0], 300),
+              url: canonicalUrl(`/services/${slug}`),
+              provider: { "@id": ORG_ID },
+              areaServed: [
+                { "@type": "City", name: "Hyderabad" },
+                { "@type": "Country", name: "India" }
+              ]
+            },
+            breadcrumbSchema([
+              { name: "Home", path: "/" },
+              { name: "Services", path: "/services" },
+              { name: service.title, path: `/services/${slug}` }
+            ])
+          ]
+        }
+      : {
+          title: "Service not found | Nutri Solutions",
+          description: "This service page could not be found. See all Nutri Solutions software development services.",
+          noindex: true
+        }
+  );
 
   if (!service) {
     return (

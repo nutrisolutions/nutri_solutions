@@ -2,35 +2,85 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowLeft, Globe } from "lucide-react";
-import { fetchProject } from "../lib/api";
+import { fetchProject, isNotFoundError } from "../lib/api";
 import ProjectScreenshotCarousel from "../components/project/ProjectScreenshotCarousel";
-import { pageSeo } from "../data/content";
+import usePageSeo from "../hooks/usePageSeo";
+import { breadcrumbSchema, canonicalUrl, fitTitle, ORG_ID, toDescription } from "../lib/seo";
+
+const projectSeo = (project, slug) => {
+  const path = `/projects/${slug}`;
+  const description = toDescription(project.shortDescription || project.description);
+  return {
+    title: fitTitle(
+      `${project.title} — ${project.applicationType || "Software"} Case Study | Nutri Solutions`,
+      `${project.title} Case Study | Nutri Solutions`,
+      project.title
+    ),
+    description,
+    image: project.banner || project.image || undefined,
+    imageAlt: `${project.title} by Nutri Solutions`,
+    schema: [
+      {
+        "@context": "https://schema.org",
+        "@type": "CreativeWork",
+        name: project.title,
+        headline: `${project.title} — ${project.applicationType || "Software"} case study`,
+        description,
+        url: canonicalUrl(path),
+        image: project.banner || project.image || undefined,
+        genre: project.applicationType || undefined,
+        keywords: Array.isArray(project.techStack) ? project.techStack.join(", ") : undefined,
+        creator: { "@id": ORG_ID },
+        dateModified: project.updatedAt || undefined
+      },
+      breadcrumbSchema([
+        { name: "Home", path: "/" },
+        { name: "Projects", path: "/projects" },
+        { name: project.title, path }
+      ])
+    ]
+  };
+};
 
 const ProjectDetailPage = () => {
   const { slug } = useParams();
   const [project, setProject] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [missing, setMissing] = useState(false);
 
   useEffect(() => {
     const load = async () => {
       setLoading(true);
       setError("");
+      setMissing(false);
       try {
         const data = await fetchProject(slug);
         setProject(data);
-        document.title = `${data.title} | Nutri Solutions`;
-      } catch {
+      } catch (err) {
         setError("Project not found");
+        setMissing(isNotFoundError(err));
       } finally {
         setLoading(false);
       }
     };
     load();
-    return () => {
-      document.title = pageSeo.home.title;
-    };
   }, [slug]);
+
+  // On a transient API failure, leave the (prerendered) head alone instead of marking it noindex.
+  usePageSeo(
+    loading
+      ? null
+      : project && !error
+        ? projectSeo(project, slug)
+        : missing
+          ? {
+              title: "Project not found | Nutri Solutions",
+              description: "This project could not be found. Browse all Nutri Solutions software projects.",
+              noindex: true
+            }
+          : null
+  );
 
   if (loading) {
     return (

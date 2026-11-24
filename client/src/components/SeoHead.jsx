@@ -2,93 +2,118 @@ import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { pageSeo, seo } from "../data/content";
 import { useSiteSettings } from "../context/SiteSettingsContext";
+import { applySeo, breadcrumbSchema, ORG_ID } from "../lib/seo";
 
-const serviceSchema = {
-  "@context": "https://schema.org",
-  "@type": "ProfessionalService",
-  name: "Nutri Solutions Software Development Services",
-  provider: { "@type": "Organization", name: "Nutri Solutions Private Limited" },
-  serviceType: [
-    "Custom Software Development",
-    "Web Development",
-    "Mobile App Development",
-    "Cloud DevOps Consulting"
-  ],
-  areaServed: "India"
+const ORG_SCHEMA_ID = "nutri-json-ld";
+
+// Section landing pages SeoHead owns. Detail pages (/blog/:slug …) and the 404 page set their own meta.
+const SECTION_NAMES = {
+  about: "About",
+  services: "Services",
+  projects: "Projects",
+  blog: "Blog",
+  careers: "Careers",
+  contact: "Contact",
+  terms: "Terms & Conditions",
+  "privacy-policy": "Privacy Policy"
 };
 
-const geo = { "@type": "GeoCoordinates", latitude: "17.434691", longitude: "78.376771" };
-
-const SeoHead = ({ page = "home" }) => {
+const SeoHead = () => {
   const { pathname } = useLocation();
   const contact = useSiteSettings();
-  const pageKey = page || (pathname === "/" ? "home" : pathname.replace(/^\//, "").split("/")[0]);
-  const meta = pageSeo[pageKey] || pageSeo.home;
 
+  // Site-wide business graph (same on every page).
   useEffect(() => {
-    document.title = meta.title;
-
-    const setMeta = (name, content, attr = "name") => {
-      let el = document.querySelector(`meta[${attr}="${name}"]`);
-      if (!el) {
-        el = document.createElement("meta");
-        el.setAttribute(attr, name);
-        document.head.appendChild(el);
-      }
-      el.setAttribute("content", content);
-    };
-
-    setMeta("description", meta.description);
-    setMeta("keywords", seo.keywords);
-    setMeta("og:title", meta.title, "property");
-    setMeta("og:description", meta.description, "property");
-    setMeta("og:type", "website", "property");
-    setMeta("og:url", `${seo.siteUrl}${pathname === "/" ? "" : pathname}`, "property");
-    setMeta("twitter:card", "summary");
-    setMeta("og:image", `${seo.siteUrl}/og-image.png`, "property");
-    setMeta("twitter:title", meta.title);
-    setMeta("twitter:description", meta.description);
-
-    const scriptId = "nutri-json-ld";
-    let script = document.getElementById(scriptId);
+    let script = document.getElementById(ORG_SCHEMA_ID);
     if (!script) {
       script = document.createElement("script");
-      script.id = scriptId;
+      script.id = ORG_SCHEMA_ID;
       script.type = "application/ld+json";
       document.head.appendChild(script);
     }
-    const organizationSchema = {
+
+    const graph = {
       "@context": "https://schema.org",
-      "@type": "Organization",
-      name: "Nutri Solutions Private Limited",
-      url: seo.siteUrl,
-      logo: `${seo.siteUrl}/favicon-512.png`,
-      description: seo.description,
-      email: contact.email,
-      telephone: contact.phoneTel,
-      contactPoint: {
-        "@type": "ContactPoint",
-        telephone: contact.phoneTel,
-        email: contact.email,
-        contactType: "customer service",
-        areaServed: "IN",
-        availableLanguage: "en"
-      },
-      address: {
-        "@type": "PostalAddress",
-        streetAddress: contact.streetAddress || contact.address,
-        addressLocality: contact.addressLocality,
-        addressRegion: contact.addressRegion,
-        postalCode: contact.postalCode,
-        addressCountry: contact.addressCountry || "IN"
-      },
-      geo,
-      areaServed: contact.addressCountry || "IN",
-      sameAs: (contact.socialLinks || []).map((link) => link.url).filter(Boolean)
+      "@graph": [
+        {
+          "@type": "ProfessionalService",
+          "@id": ORG_ID,
+          name: "Nutri Solutions Private Limited",
+          alternateName: "Nutri Solutions",
+          url: `${seo.siteUrl}/`,
+          logo: `${seo.siteUrl}/favicon-512.png`,
+          image: `${seo.siteUrl}/og-image.png`,
+          description: seo.description,
+          email: contact.email,
+          telephone: contact.phoneTel,
+          address: {
+            "@type": "PostalAddress",
+            streetAddress: contact.streetAddress || contact.address,
+            addressLocality: contact.addressLocality,
+            addressRegion: contact.addressRegion,
+            postalCode: contact.postalCode,
+            addressCountry: contact.addressCountry || "IN"
+          },
+          geo: { "@type": "GeoCoordinates", latitude: 17.434691, longitude: 78.376771 },
+          hasMap: contact.mapUrl || undefined,
+          areaServed: [
+            { "@type": "City", name: "Hyderabad" },
+            { "@type": "Country", name: "India" }
+          ],
+          contactPoint: {
+            "@type": "ContactPoint",
+            telephone: contact.phoneTel,
+            email: contact.email,
+            contactType: "sales",
+            areaServed: "IN",
+            availableLanguage: ["en"]
+          },
+          knowsAbout: [
+            "Custom Software Development",
+            "Web Development",
+            "Mobile App Development",
+            "ERP Development",
+            "Cloud DevOps",
+            "UI/UX Design",
+            "Quality Assurance"
+          ],
+          sameAs: (contact.socialLinks || []).map((link) => link.url).filter(Boolean)
+        },
+        {
+          "@type": "WebSite",
+          "@id": `${seo.siteUrl}/#website`,
+          url: `${seo.siteUrl}/`,
+          name: "Nutri Solutions",
+          publisher: { "@id": ORG_ID },
+          inLanguage: "en-IN"
+        }
+      ]
     };
 
-    script.textContent = JSON.stringify([organizationSchema, serviceSchema]);
-  }, [meta, pathname, contact]);
+    script.textContent = JSON.stringify(graph);
+  }, [contact]);
+
+  // Section-level page meta.
+  useEffect(() => {
+    const segments = pathname.replace(/^\/+|\/+$/g, "").split("/").filter(Boolean);
+    const isHome = segments.length === 0;
+    const key = isHome ? "home" : segments[0];
+    if (segments.length > 1 || !pageSeo[key]) return;
+
+    applySeo({
+      title: pageSeo[key].title,
+      description: pageSeo[key].description,
+      pathname,
+      schema: isHome
+        ? []
+        : [
+            breadcrumbSchema([
+              { name: "Home", path: "/" },
+              { name: SECTION_NAMES[key] || pageSeo[key].title, path: `/${key}` }
+            ])
+          ]
+    });
+  }, [pathname]);
 
   return null;
 };

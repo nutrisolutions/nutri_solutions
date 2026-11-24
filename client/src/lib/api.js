@@ -15,6 +15,9 @@ export const setAuthToken = (token) => {
   }
 };
 
+/** True only when the API definitively says the item doesn't exist (vs. a network/server hiccup). */
+export const isNotFoundError = (error) => error?.response?.status === 404;
+
 export const fetchProjects = (params) => api.get("/api/projects", { params }).then((r) => r.data.projects);
 
 export const fetchProject = (slug) => api.get(`/api/projects/${slug}`).then((r) => r.data.project);

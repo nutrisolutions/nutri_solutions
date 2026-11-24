@@ -3,8 +3,8 @@ import SiteSettings from "../models/SiteSettings.js";
 export const DEFAULT_SITE_SETTINGS = {
   key: "default",
   email: "info@nutrisolutions.co.in",
-  phone: "+91 91001 19741",
-  phoneTel: "+919100119741",
+  phone: "+91 99493 55560",
+  phoneTel: "+919949355560",
   address:
     "Orbit, Plot No 30/C, Sy No 83/1, Raidurgam, Knowledge City Rd, Hyderabad, Telangana 500032",
   streetAddress: "Orbit, Plot No 30/C, Sy No 83/1, Raidurgam, Knowledge City Rd",

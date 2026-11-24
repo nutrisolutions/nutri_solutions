@@ -1,4 +1,3 @@
-import { useLocation } from "react-router-dom";
 import Navbar from "../Navbar";
 import Footer from "../Footer";
 import SeoHead from "../SeoHead";
@@ -9,20 +8,14 @@ import useScrollReveal from "../../hooks/useScrollReveal";
 import { SiteSettingsProvider } from "../../context/SiteSettingsContext";
 
 const AppLayout = () => {
-  const { pathname } = useLocation();
   useScrollToTop();
   useScrollReveal();
-
-  const seoKey =
-    pathname === "/"
-      ? "home"
-      : pathname.replace(/^\//, "").split("/")[0] || "home";
 
   return (
     <SiteSettingsProvider>
       <div className="app-shell">
         <AnalyticsTracker />
-        <SeoHead page={seoKey} />
+        <SeoHead />
         <Navbar />
         <PageTransition />
         <Footer />

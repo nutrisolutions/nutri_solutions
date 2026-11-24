@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Plus, Minus } from "lucide-react";
@@ -8,6 +8,26 @@ import { faqs } from "../data/content";
 const FAQSection = ({ limit, showMoreLink = false }) => {
   const [openIndex, setOpenIndex] = useState(0);
   const items = limit ? faqs.slice(0, limit) : faqs;
+
+  // FAQPage JSON-LD only where the full FAQ lives (contact page), so it isn't duplicated on home.
+  useEffect(() => {
+    if (limit) return undefined;
+    const script = document.createElement("script");
+    script.id = "nutri-json-ld-faq";
+    script.type = "application/ld+json";
+    script.textContent = JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      mainEntity: faqs.map((faq) => ({
+        "@type": "Question",
+        name: faq.question,
+        acceptedAnswer: { "@type": "Answer", text: faq.answer }
+      }))
+    });
+    document.getElementById(script.id)?.remove();
+    document.head.appendChild(script);
+    return () => script.remove();
+  }, [limit]);
 
   return (
     <section id="faqs" className="section section-muted">
@@ -37,7 +57,7 @@ const FAQSection = ({ limit, showMoreLink = false }) => {
                   onClick={() => setOpenIndex(isOpen ? -1 : index)}
                   aria-expanded={isOpen}
                 >
-                  <h4>{faq.question}</h4>
+                  <h3>{faq.question}</h3>
                   {isOpen ? <Minus size={18} /> : <Plus size={18} />}
                 </button>
                 <AnimatePresence>

@@ -35,14 +35,14 @@ const HeroSection = ({ company }) => {
 
       <div className="container protoz-hero-layout">
         <div className="protoz-hero-copy">
-          <motion.p
+          <motion.h1
             className="protoz-hero-eyebrow"
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            Software development · Web · Mobile · Enterprise
-          </motion.p>
+            Custom software development company in Hyderabad
+          </motion.h1>
 
           <motion.div
             className="protoz-hero-heading"
@@ -50,7 +50,7 @@ const HeroSection = ({ company }) => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.08, duration: 0.65 }}
           >
-            <h1>From concept to code to customers</h1>
+            <p className="protoz-hero-title">From concept to code to customers</p>
             <p className="protoz-hero-accent">built with clarity, speed, and long-term support</p>
           </motion.div>
 

@@ -4765,8 +4765,10 @@ html.admin-route.lenis body {
   text-align: left;
 }
 
-.faq-trigger h4 {
+.faq-trigger h3 {
   margin: 0;
+  font-family: inherit;
+  letter-spacing: normal;
   font-size: 0.98rem;
 }
 

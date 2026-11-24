@@ -7,6 +7,9 @@ const BrandLogo = ({ variant = "branding", className = "" }) => {
     <img
       src={src}
       alt={alt}
+      // Intrinsic size (from the SVG viewBox) reserves the aspect ratio; CSS sets the rendered size.
+      width={isLogoOnly ? 181 : 875}
+      height={isLogoOnly ? 299 : 297}
       className={`brand-logo ${isLogoOnly ? "brand-logo--icon" : "brand-logo--full"} ${className}`.trim()}
       loading="eager"
       decoding="async"

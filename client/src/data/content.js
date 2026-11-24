@@ -27,7 +27,7 @@ export const navLinks = [
 
 export const pageSeo = {
   home: {
-    title: "Nutri Solutions | Custom Software Development Company",
+    title: "Custom Software Development Company in Hyderabad | Nutri Solutions",
     description:
       "Build scalable web, mobile, and enterprise software with Nutri Solutions — agile delivery, transparent communication, and long-term support from India."
   },
@@ -462,8 +462,8 @@ export const careersContent = {
 
 export const contactInfo = {
   email: "info@nutrisolutions.co.in",
-  phone: "+91 91001 19741",
-  phoneTel: "+919100119741",
+  phone: "+91 99493 55560",
+  phoneTel: "+919949355560",
   address:
     "Orbit, Plot No 30/C, Sy No 83/1, Raidurgam, Knowledge City Rd, Hyderabad, Telangana 500032",
   previewImage: photo("1560472354-b33ff0c44a43", 800),

@@ -123,7 +123,7 @@
   margin-inline: auto;
 }
 
-.protoz-hero h1 {
+.protoz-hero .protoz-hero-title {
   font-size: clamp(1.75rem, 8vw, 2.25rem);
 }
 
@@ -401,7 +401,7 @@
     border-radius: 10px;
   }
 
-  .protoz-hero h1 {
+  .protoz-hero .protoz-hero-title {
     font-size: 1.65rem;
   }
 
@@ -459,7 +459,7 @@
     max-height: 48px;
   }
 
-  .protoz-hero h1 {
+  .protoz-hero .protoz-hero-title {
     font-size: clamp(1.85rem, 7vw, 2.35rem);
   }
 
@@ -737,7 +737,7 @@
     margin-inline: 0;
   }
 
-  .protoz-hero h1 {
+  .protoz-hero .protoz-hero-title {
     font-size: clamp(2rem, 3.85vw, 3.15rem);
   }
 
@@ -1080,7 +1080,7 @@
     font-size: clamp(2.75rem, 2.5vw, 3.25rem);
   }
 
-  .protoz-hero h1 {
+  .protoz-hero .protoz-hero-title {
     font-size: clamp(2.75rem, 2.8vw, 3.5rem);
   }
 

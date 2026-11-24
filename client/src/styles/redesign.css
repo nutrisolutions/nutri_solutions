@@ -34,7 +34,7 @@ h2,
 h3,
 .section-title,
 .page-hero-title,
-.protoz-hero h1 {
+.protoz-hero .protoz-hero-title {
   font-family: var(--font-display);
   letter-spacing: -0.03em;
 }
@@ -368,7 +368,7 @@ h3,
   padding-top: 0.1rem;
 }
 
-.protoz-hero-heading h1 {
+.protoz-hero-heading .protoz-hero-title {
   margin: 0;
 }
 
@@ -1026,6 +1026,8 @@ h3,
 .protoz-hero-eyebrow {
   display: inline-block;
   margin: 0;
+  font-family: inherit;
+  line-height: 1.4;
   font-size: clamp(0.8rem, 1.15vw, 0.92rem);
   font-weight: 600;
   letter-spacing: 0.12em;
@@ -1033,7 +1035,7 @@ h3,
   color: var(--text-muted);
 }
 
-.protoz-hero h1 {
+.protoz-hero .protoz-hero-title {
   margin: 0;
   font-size: clamp(2rem, 3.85vw, 3.15rem);
   line-height: 1.08;

@@ -52,31 +52,45 @@ echo "==> Current commit:"
 git log -1 --oneline
 
 echo ""
-echo "==> Installing frontend dependencies..."
+if [ -n "$PREBUILT_SITE" ] && [ -f "$PREBUILT_SITE" ]; then
+  # Built + prerendered in GitHub Actions (see .github/workflows/deploy.yml).
+  echo "==> Installing prebuilt site from $PREBUILT_SITE..."
+  STAGE_DIR=$(mktemp -d)
+  tar -xzf "$PREBUILT_SITE" -C "$STAGE_DIR"
+  if [ ! -f "$STAGE_DIR/index.html" ] || [ ! -f "$STAGE_DIR/_pages/index.html" ]; then
+    echo "Prebuilt site is incomplete (missing index.html or _pages/index.html) — aborting." >&2
+    exit 1
+  fi
+  rsync -a --delete "$STAGE_DIR/" "$WEB_DIR/"
+  rm -rf "$STAGE_DIR" "$PREBUILT_SITE"
+else
+  # Fallback: plain SPA build on the server (no prerender — headless Chrome is too heavy here).
+  echo "==> Installing frontend dependencies..."
+  cd "$CLIENT_DIR"
+  PUPPETEER_SKIP_DOWNLOAD=true npm ci
 
-cd "$CLIENT_DIR"
-npm ci
+  echo ""
+  echo "==> Building frontend..."
+  npm run build
 
-echo ""
-echo "==> Building frontend..."
+  echo ""
+  echo "==> Deploying frontend..."
+  rsync -a --delete "$CLIENT_DIR/dist/" "$WEB_DIR/"
+fi
 
-npm run build
+if [ "$FRONTEND_ONLY" = "1" ]; then
+  echo ""
+  echo "==> Frontend-only deploy: skipping backend."
+else
+  echo ""
+  echo "==> Installing backend dependencies..."
+  cd "$SERVER_DIR"
+  npm ci
 
-echo ""
-echo "==> Deploying frontend..."
-
-rsync -a --delete "$CLIENT_DIR/dist/" "$WEB_DIR/"
-
-echo ""
-echo "==> Installing backend dependencies..."
-
-cd "$SERVER_DIR"
-npm ci
-
-echo ""
-echo "==> Restarting backend..."
-
-pm2 restart nutri-backend
+  echo ""
+  echo "==> Restarting backend..."
+  pm2 restart nutri-backend
+fi
 
 echo ""
 echo "==> PM2 status..."
