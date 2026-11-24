@@ -38,7 +38,7 @@
 
 ## 11. Do Not Repeat
 - Don't add `gzip on;` at http level in `deploy/nginx/` — Ubuntu's nginx.conf already has it (duplicate → `nginx -t` fails).
-- Don't use `listen … http2` → `http2 on;` until the CI runner's nginx is ≥1.25.1 (CI `nginx -t` would fail).
+- nginx config uses `http2 on;` (needs nginx ≥1.25.1 — prod is 1.28, CI runner is newer). CI dummy dhparams must be ≥2048-bit (OpenSSL 3 rejects 1024).
 
 ## 12. Last Updated
 2026-11-24

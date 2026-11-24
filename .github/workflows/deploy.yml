@@ -46,7 +46,7 @@ jobs:
             -keyout /etc/letsencrypt/live/nutrisolutions.co.in/privkey.pem \
             -out /etc/letsencrypt/live/nutrisolutions.co.in/fullchain.pem 2> /dev/null
           echo "ssl_protocols TLSv1.2 TLSv1.3;" | sudo tee /etc/letsencrypt/options-ssl-nginx.conf > /dev/null
-          sudo openssl dhparam -dsaparam -out /etc/letsencrypt/ssl-dhparams.pem 1024 2> /dev/null
+          sudo openssl dhparam -dsaparam -out /etc/letsencrypt/ssl-dhparams.pem 2048 2> /dev/null
           sudo cp deploy/nginx/security-headers.conf /etc/nginx/snippets/nutrisolutions-security-headers.conf
           sudo cp deploy/nginx/nutrisolutions.conf /etc/nginx/sites-enabled/nutrisolutions.conf
           sudo rm -f /etc/nginx/sites-enabled/default
