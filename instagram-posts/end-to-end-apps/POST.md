@@ -2,7 +2,7 @@
 
 Upload the 8 PNGs in order (01 → 08). Format: 1080×1350 (4:5 portrait).
 The same content is published on the website as a blog post:
-https://www.nutrisolutions.co.in/blog/end-to-end-applications-we-built
+https://www.nutrisolutions.co.in/blog/5-applications-we-built-end-to-end-from-idea-to-launch
 
 ## Caption
 

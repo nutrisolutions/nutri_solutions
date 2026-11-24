@@ -201,7 +201,7 @@ const main = async () => {
         const images = [
           ...new Set(
             [...document.querySelectorAll(".blog-detail-cover img, .blog-detail-content img")]
-              .map((img) => img.getAttribute("src"))
+              .map((img) => (img.getAttribute("src") || "").replace(/^https:\/\/www\.nutrisolutions\.co\.in(?=\/)/, ""))
               .filter((src) => src && src.startsWith("/") && !src.startsWith("//"))
           )
         ];
